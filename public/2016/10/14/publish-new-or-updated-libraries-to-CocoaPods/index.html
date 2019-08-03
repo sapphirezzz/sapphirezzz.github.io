@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":true,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="详细介绍了如何发布代码到CocoaPods，以及后续的更新等">
+<meta name="keywords" content="CocoaPods">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手把手教你发布代码到CocoaPods">
+<meta property="og:url" content="https://zackzheng.info/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="详细介绍了如何发布代码到CocoaPods，以及后续的更新等">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-29T09:15:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="手把手教你发布代码到CocoaPods">
+<meta name="twitter:description" content="详细介绍了如何发布代码到CocoaPods，以及后续的更新等">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://zackzheng.info/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>手把手教你发布代码到CocoaPods | Just My Blog</title>
+  
+
+
+
+
+  <script async src="//www.googletagmanager.com/gtag/js?id=UA-86660611-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-86660611-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fd61ba8d7ebf70f7c206f1a51025535b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/sapphirezzz" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content="Zack Zheng's Blog">
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">手把手教你发布代码到CocoaPods
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-10-14 16:00:00" itemprop="dateCreated datePublished" datetime="2016-10-14T16:00:00+08:00">2016-10-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-04-29 17:15:43" itemprop="dateModified" datetime="2019-04-29T17:15:43+08:00">2019-04-29</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">Comments: </span>
+                <a href="/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+            <span id="/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/" class="leancloud_visitors" data-flag-title="手把手教你发布代码到CocoaPods">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+            <div class="post-description">详细介绍了如何发布代码到CocoaPods，以及后续的更新等</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
+<li>前言</li>
+<li>CocoaPods原理</li>
+<li>发布与更新自己的pod<ul>
+<li>安装CocoaPods</li>
+<li>创建编辑自己的pod</li>
+<li>本地初始化pod并提交到Github</li>
+<li>注册CocoaPods并提交pod</li>
+<li>更新自己的pod</li>
+</ul>
+</li>
+<li>其他命令</li>
+</ul>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近App在整理一些第三方库，包括一些没怎么再维护的替换为自己实现，所以做了一些简单的库上传到CocoaPods方便管理和维护。</p>
+<h1 id="CocoaPods原理"><a href="#CocoaPods原理" class="headerlink" title="CocoaPods原理"></a>CocoaPods原理</h1><p>每种语言发展到一定阶段，就会出现相应的依赖管理工具，例如Node.js的<em>npm</em>、Swift的<em>Swift Package Manager</em>，早期为iOS提供依赖管理的工具叫做：CocoaPods。</p>
+<p>特点：</p>
+<ul>
+<li>CocoaPods会将所有的第三方库以target的方式组成一个名为Pods的工程。整个第三方库工程会生成一个库提供给我们使用。</li>
+<li>我们的工程和Pods工程会被以workspace的形式组织和管理，也就是*<em>.xcworkspace</em>文件。</li>
+</ul>
+<p>好处：</p>
+<ul>
+<li>CocoaPods上有很多好用的库，以此缩短我们的开发周期和提升软件的质量。</li>
+<li>CocoaPods会自动将第三方开源库的源码下载下来，并且为工程设置好相应的系统依赖和编译参数。</li>
+<li>通过<em>Podfile</em>可以很方便地更新第三方库。</li>
+</ul>
+<h1 id="发布与更新自己的pod"><a href="#发布与更新自己的pod" class="headerlink" title="发布与更新自己的pod"></a>发布与更新自己的pod</h1><p>下面以我提交的库<em>ZInAppPurchase</em>为例，讲解下整个过程和遇到的问题。</p>
+<blockquote>
+<p>参考官方文档<a href="http://guides.cocoapods.org/making/index.html" target="_blank" rel="noopener">Making CocoaPods</a></p>
+</blockquote>
+<h2 id="安装CocoaPods"><a href="#安装CocoaPods" class="headerlink" title="安装CocoaPods"></a>安装CocoaPods</h2><p>CocoaPods是用Ruby实现的，而Gem是一个管理Ruby库和程序的标准包，它通过Ruby Gem源来查找、安装、升级和卸载软件包。</p>
+<ul>
+<li>更新Gem</li>
+</ul>
+<p>如果没有翻墙可能会比较慢，可以将原来的源替换成新的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 查看本机当前设置的源</span><br><span class="line">ZackZhengdeMacBook-Pro:~ zack$ gem source -l</span><br><span class="line">*** CURRENT SOURCES ***</span><br><span class="line"></span><br><span class="line">https://rubygems.org/</span><br><span class="line">// 移除掉原有的源</span><br><span class="line">ZackZhengdeMacBook-Pro:~ zack$ gem sources --remove https://rubygems.org/</span><br><span class="line">// 添加国内的源</span><br><span class="line">ZackZhengdeMacBook-Pro:~ zack$ gem sources -a https://ruby.taobao.org/</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p><strong>淘宝的源已不再维护</strong>，可以使用新的源，参考<a href="https://gems.ruby-china.org/" target="_blank" rel="noopener">RubyGems 镜像 - Ruby China</a></p>
+</blockquote>
+<p>接下来更新Gem：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:~ zack$ sudo gem update --system</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>安装并初始化CocoaPods</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:~ zack$ sudo gem install cocoapods --pre</span><br><span class="line">Password:</span><br><span class="line">Successfully installed cocoapods-1.1.0.rc.3</span><br><span class="line">Parsing documentation for cocoapods-1.1.0.rc.3</span><br><span class="line">Done installing documentation for cocoapods after 2 seconds</span><br><span class="line">1 gem installed</span><br></pre></td></tr></table></figure>
+<p>使用  –pre 是为了尽量使用最新的版本，没更新时遇到过<code>pod lib lint</code>发生下面错误的情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild: error: &apos;App.xcworkspace&apos; does not exist.</span><br></pre></td></tr></table></figure>
+<p>初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:~ zack$ pod setup</span><br><span class="line">Setting up CocoaPods master repo</span><br><span class="line">  $ /usr/bin/git -C /Users/zack/.cocoapods/repos/master pull --ff-only</span><br><span class="line">  From https://github.com/CocoaPods/Specs</span><br><span class="line">     cae692c..3231da7  master     -&gt; origin/master</span><br><span class="line">  Updating cae692c..3231da7</span><br><span class="line">  Fast-forward</span><br><span class="line">  ......</span><br><span class="line">Setup completed</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>所有项目的Podspec文件都托管在 <a href="https://github.com/CocoaPods/Specs" target="_blank" rel="noopener">https://github.com/CocoaPods/Specs</a> 第一次执行 pod setup时，CocoaPods会将这些podspec索引文件更新到本地的 ~/.cocoapods/目录下，这个索引文件比较大。网上有讲解更换repo镜像的方法。</p>
+</blockquote>
+<h2 id="创建编辑自己的pod"><a href="#创建编辑自己的pod" class="headerlink" title="创建编辑自己的pod"></a>创建编辑自己的pod</h2><p>使用<code>pod lib</code>的命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:~ zack$ pod lib create ZInAppPurchase</span><br><span class="line">Cloning `https://github.com/CocoaPods/pod-template.git` into `ZInAppPurchase`.</span><br><span class="line">Configuring ZInAppPurchase template.</span><br><span class="line"></span><br><span class="line">------------------------------</span><br><span class="line"></span><br><span class="line">To get you started we need to ask a few questions, this should only take a minute.</span><br><span class="line"></span><br><span class="line">If this is your first time we recommend running through with the guide: </span><br><span class="line"> - http://guides.cocoapods.org/making/using-pod-lib-create.html</span><br><span class="line"> ( hold cmd and double click links to open in a browser. )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">What language do you want to use?? [ Swift / ObjC ]</span><br><span class="line"> &gt; Swift</span><br><span class="line"></span><br><span class="line">Would you like to include a demo application with your library? [ Yes / No ]</span><br><span class="line"> &gt; Yes</span><br><span class="line"></span><br><span class="line">Which testing frameworks will you use? [ Quick / None ]</span><br><span class="line"> &gt; None</span><br><span class="line"></span><br><span class="line">Would you like to do view based testing? [ Yes / No ]</span><br><span class="line"> &gt; No</span><br><span class="line"></span><br><span class="line">Running pod install on your new library.</span><br><span class="line"></span><br><span class="line">Analyzing dependencies</span><br><span class="line">Fetching podspec for `ZInAppPurchase` from `../`</span><br><span class="line">Downloading dependencies</span><br><span class="line">Installing ZInAppPurchase (0.1.0)</span><br><span class="line">Generating Pods project</span><br><span class="line">Integrating client project</span><br><span class="line"></span><br><span class="line">[!] Please close any current Xcode sessions and use `ZInAppPurchase.xcworkspace` for this project from now on.</span><br><span class="line">Sending stats</span><br><span class="line">Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.</span><br><span class="line"></span><br><span class="line"> Ace! you&apos;re ready to go!</span><br><span class="line"> We will start you off by opening your project in Xcode</span><br><span class="line">  open &apos;ZInAppPurchase/Example/ZInAppPurchase.xcworkspace&apos;</span><br><span class="line"></span><br><span class="line">To learn more about the template see `https://github.com/CocoaPods/pod-template.git`.</span><br><span class="line">To learn more about creating a new pod, see `http://guides.cocoapods.org/making/making-a-cocoapod`.</span><br></pre></td></tr></table></figure>
+<p>修改文件：</p>
+<p>/Users/zack/ZInAppPurchase/ZInAppPurchase/Classes/ReplaceMe.swift<br>/Users/zack/ZInAppPurchase/ZInAppPurchase.podspec</p>
+<blockquote>
+<p> *<em>.podspec</em>文件主要是修改<em>s.homepage</em>、<em>s.source</em>、<em>s.frameworks</em>。</p>
+</blockquote>
+<p><em>ZInAppPurchase.podspec</em>内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Pod::Spec.new do |s|</span><br><span class="line">  s.name             = &apos;ZInAppPurchase&apos;</span><br><span class="line">  s.version          = &apos;0.1.1&apos;</span><br><span class="line">  s.summary          = &apos;A short description of ZInAppPurchase.&apos;</span><br><span class="line"></span><br><span class="line">  s.description      = &lt;&lt;-DESC</span><br><span class="line">TODO: Add long description of the pod here.</span><br><span class="line">                       DESC</span><br><span class="line"></span><br><span class="line">  s.homepage         = &apos;https://github.com/sapphirezzz/ZInAppPurchase&apos;</span><br><span class="line">  s.license          = &#123; :type =&gt; &apos;MIT&apos;, :file =&gt; &apos;LICENSE&apos; &#125;</span><br><span class="line">  s.author           = &#123; &apos;sapphirezzz&apos; =&gt; &apos;zhengzuanzhe@gmail.com&apos; &#125;</span><br><span class="line">  s.source           = &#123; :git =&gt; &apos;https://github.com/sapphirezzz/ZInAppPurchase.git&apos;, :tag =&gt; s.version.to_s &#125;</span><br><span class="line"></span><br><span class="line">  s.ios.deployment_target = &apos;8.0&apos;</span><br><span class="line"></span><br><span class="line">  s.source_files = &apos;ZInAppPurchase/Classes/**/*&apos;</span><br><span class="line">  s.frameworks = &apos;Foundation&apos;, &apos;StoreKit&apos;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>安装pod：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:~ zack$ cd ZInAppPurchase/Example/</span><br><span class="line">ZackZhengdeMacBook-Pro:Example zack$ pod install</span><br><span class="line">Analyzing dependencies</span><br><span class="line">Fetching podspec for `ZInAppPurchase` from `../`</span><br><span class="line">Downloading dependencies</span><br><span class="line">Installing ZInAppPurchase 0.1.0 (was 0.1.0)</span><br><span class="line">Generating Pods project</span><br><span class="line">Integrating client project</span><br><span class="line">Sending stats</span><br><span class="line">Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>此时会看到工程目录下多出ZInAppPurchase.xcworkspace、Podfile.lock文件和Pods目录。</p>
+</blockquote>
+<p>接下来可以打开下面文件编写库：</p>
+<p>/Users/zack/ZInAppPurchase/Example/ZInAppPurchase.xcworkspace</p>
+<h2 id="本地初始化pod并提交到Github"><a href="#本地初始化pod并提交到Github" class="headerlink" title="本地初始化pod并提交到Github"></a>本地初始化pod并提交到Github</h2><p>先到Github建立仓库<em>ZInAppPurchase</em>，并提交代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git add -A &amp;&amp; git commit -m &quot;Release 0.1.0&quot;</span><br><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git tag &apos;0.1.1&apos;</span><br><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git remote add origin git@github.com:sapphirezzz/ZInAppPurchase.git</span><br><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git push --tags</span><br><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git push origin master</span><br></pre></td></tr></table></figure>
+<p>初始化pod：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ pod lib lint --allow-warnings</span><br><span class="line"></span><br><span class="line"> -&gt; ZInAppPurchase (0.1.0)</span><br><span class="line">    - WARN  | summary: The summary is not meaningful.</span><br><span class="line"></span><br><span class="line">ZInAppPurchase passed validation.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用<em>–allow-warnings</em>是使得有warning时也能验证通过。比如：WARN  | summary: The summary is not meaningful.</p>
+</blockquote>
+<h2 id="注册CocoaPods并提交pod"><a href="#注册CocoaPods并提交pod" class="headerlink" title="注册CocoaPods并提交pod"></a>注册CocoaPods并提交pod</h2><p>先注册：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ pod trunk register zhengzuanzhe@gmail.com &apos;zackzheng&apos; --description=&apos;macbook pro&apos;</span><br><span class="line">[!] Please verify the session by clicking the link in the verification email that has been sent to zhengzuanzhe@gmail.com</span><br></pre></td></tr></table></figure>
+<p>然后打开收到的标题为<em>[CocoaPods] Confirm your session.</em>的邮件，点击链接之后跳转页面，会看到：</p>
+<p><em>You can go back to your terminal now.</em></p>
+<p>最后就deploy了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ pod trunk push ZInAppPurchase.podspec --allow-warnings</span><br><span class="line">Updating spec repo `master`</span><br><span class="line">Validating podspec</span><br><span class="line"> -&gt; ZInAppPurchase (0.1.0)</span><br><span class="line">    - WARN  | summary: The summary is not meaningful.</span><br><span class="line"></span><br><span class="line">Updating spec repo `master`</span><br><span class="line">  - Data URL: https://raw.githubusercontent.com/CocoaPods/Specs/ae961ca47afb2a9171653382214897c4e160a679/Specs/ZInAppPurchase/0.1.0/ZInAppPurchase.podspec.json</span><br><span class="line">  - Log messages:</span><br><span class="line">    - October 13th, 11:28: Push for `ZInAppPurchase 0.1.0&apos; initiated.</span><br><span class="line">    - October 13th, 11:28: Push for `ZInAppPurchase 0.1.0&apos; has been pushed</span><br><span class="line">    (1.423909231 s).</span><br></pre></td></tr></table></figure>
+<p>看看库是否已经可以找到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ pod search ZInAppPurchase</span><br><span class="line">-&gt; ZInAppPurchase (0.1.0)</span><br><span class="line">   A short description of ZInAppPurchase.</span><br><span class="line">   pod &apos;ZInAppPurchase&apos;, &apos;~&gt; 0.1.0&apos;</span><br><span class="line">   - Homepage: https://github.com/sapphirezzz/ZInAppPurchase</span><br><span class="line">   - Source:   https://github.com/sapphirezzz/ZInAppPurchase.git</span><br><span class="line">   - Versions: 0.1.0 [master repo]</span><br><span class="line">(END)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>组合键shift+Q退出</p>
+</blockquote>
+<h2 id="更新自己的pod"><a href="#更新自己的pod" class="headerlink" title="更新自己的pod"></a>更新自己的pod</h2><p>修改完代码之后，提交到Github并push到CocoaPods：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git add -A &amp;&amp; git commit -m </span><br><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git tag &apos;0.1.1&apos;</span><br><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ git push --tags</span><br><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ pod trunk push ZInAppPurchase.podspec --allow-warnings</span><br><span class="line">Updating spec repo `master`</span><br><span class="line">Validating podspec</span><br><span class="line"> -&gt; ZInAppPurchase (0.1.1)</span><br><span class="line">    - WARN  | summary: The summary is not meaningful.</span><br><span class="line"></span><br><span class="line">Updating spec repo `master`</span><br><span class="line">  - Data URL: https://raw.githubusercontent.com/CocoaPods/Specs/1fba9c650a4212c0b7be707698b8597556f0ece7/Specs/ZInAppPurchase/0.1.1/ZInAppPurchase.podspec.json</span><br><span class="line">  - Log messages:</span><br><span class="line">    - October 13th, 12:42: Push for `ZInAppPurchase 0.1.1&apos; initiated.</span><br><span class="line">    - October 13th, 12:43: Push for `ZInAppPurchase 0.1.1&apos; has been pushed</span><br><span class="line">    (1.090057228 s).</span><br></pre></td></tr></table></figure>
+<h1 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h1><p>查看CocoaPods上的个人信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ZackZhengdeMacBook-Pro:ZInAppPurchase zack$ pod trunk me</span><br><span class="line">  - Name:     Zackzheng</span><br><span class="line">  - Email:    zhengzuanzhe@gmail.com</span><br><span class="line">  - Since:    May 30th, 21:28</span><br><span class="line">  - Pods:</span><br><span class="line">    - ZInAppPurchase</span><br><span class="line">    - ZPlaceholderTextView</span><br><span class="line">    - ZPopTipView</span><br><span class="line">  - Sessions:</span><br><span class="line">    - May 30th, 21:28       -        October 6th, 00:10. IP: 14.18.48.167 </span><br><span class="line">    </span><br><span class="line">    - September 28th, 02:06 - February 18th, 2017 10:43. IP: 121.33.185.113</span><br><span class="line">    Description: macbook pro</span><br><span class="line">    - October 13th, 11:24   - February 18th, 2017 11:31. IP: 183.240.19.242</span><br><span class="line">    Description: macbook pro</span><br></pre></td></tr></table></figure>
+<p>有时候如果提交有问题，可以执行一下命令删除：</p>
+<p>// 直接废去这个pod</p>
+<p>pod trunk deprecate ZInAppPurchase</p>
+<p>// 废去这个pod的某个版本</p>
+<p>pod trunk delete ZInAppPurchase 1.0.0</p>
+<blockquote>
+<p>测试过，两个命令使用完都没返回成功，且<em>pod search</em>是可以找到的，但实际却是成功的。</p>
+</blockquote>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://zackzheng.info">https://zackzheng.info</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/CocoaPods/" rel="tag"># CocoaPods</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/31/ios-live-comment-praise/" rel="next" title="iOS直播：评论框与粒子系统点赞动画">
+                <i class="fa fa-chevron-left"></i> iOS直播：评论框与粒子系统点赞动画
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/26/config-different-ssh-key-for-multiple-git-accounts/" rel="prev" title="为多个不同的git帐号配置ssh key">
+                为多个不同的git帐号配置ssh key <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Zack Zheng">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <div class="site-description motion-element" itemprop="description">Zack Zheng's Blog</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/sapphirezzz" title="GitHub &rarr; https://github.com/sapphirezzz" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhengzuanzhe@gmail.com" title="E-Mail &rarr; mailto:zhengzuanzhe@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CocoaPods原理"><span class="nav-number">3.</span> <span class="nav-text">CocoaPods原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#发布与更新自己的pod"><span class="nav-number">4.</span> <span class="nav-text">发布与更新自己的pod</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装CocoaPods"><span class="nav-number">4.1.</span> <span class="nav-text">安装CocoaPods</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建编辑自己的pod"><span class="nav-number">4.2.</span> <span class="nav-text">创建编辑自己的pod</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地初始化pod并提交到Github"><span class="nav-number">4.3.</span> <span class="nav-text">本地初始化pod并提交到Github</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册CocoaPods并提交pod"><span class="nav-number">4.4.</span> <span class="nav-text">注册CocoaPods并提交pod</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更新自己的pod"><span class="nav-number">4.5.</span> <span class="nav-text">更新自己的pod</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他命令"><span class="nav-number">5.</span> <span class="nav-text">其他命令</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz',
+    appKey: 'PeIEayFBbCg6sRnLi6yeImgD',
+    placeholder: 'Just say hi .',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn'
+  });
+</script>
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz',
+                'X-LC-Key': 'PeIEayFBbCg6sRnLi6yeImgD',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

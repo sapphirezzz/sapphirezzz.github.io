@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":true,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="详解Shell脚本实现iOS自动化编译打包提交的过程">
+<meta name="keywords" content="iOS Shell 持续集成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="详解Shell脚本实现iOS自动化编译打包提交">
+<meta property="og:url" content="https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="详解Shell脚本实现iOS自动化编译打包提交的过程">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-29T09:17:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="详解Shell脚本实现iOS自动化编译打包提交">
+<meta name="twitter:description" content="详解Shell脚本实现iOS自动化编译打包提交的过程">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>详解Shell脚本实现iOS自动化编译打包提交 | Just My Blog</title>
+  
+
+
+
+
+  <script async src="//www.googletagmanager.com/gtag/js?id=UA-86660611-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-86660611-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fd61ba8d7ebf70f7c206f1a51025535b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/sapphirezzz" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content="Zack Zheng's Blog">
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">详解Shell脚本实现iOS自动化编译打包提交
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2015-12-27 16:00:00" itemprop="dateCreated datePublished" datetime="2015-12-27T16:00:00+08:00">2015-12-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-04-29 17:17:28" itemprop="dateModified" datetime="2019-04-29T17:17:28+08:00">2019-04-29</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">Comments: </span>
+                <a href="/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+            <span id="/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/" class="leancloud_visitors" data-flag-title="详解Shell脚本实现iOS自动化编译打包提交">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+            <div class="post-description">详解Shell脚本实现iOS自动化编译打包提交的过程</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
+<li>前言</li>
+<li>Shell脚本涉及的工具<ul>
+<li>xcodebuild和xcrun</li>
+<li>altool</li>
+<li>fir-cli</li>
+<li>PlistBuddy</li>
+</ul>
+</li>
+<li>一些概念的区别</li>
+<li>具体实现<ul>
+<li>xcodebuild和xcrun</li>
+<li>准备Plist文件</li>
+<li>获取命令行参数</li>
+<li>清理构建目录</li>
+<li>编译打包成Archive</li>
+<li>将Archive导出</li>
+<li>上传到Fir</li>
+<li>验证并上传到App Store</li>
+<li>邮件通知相关同事</li>
+<li>上传符号表到Bugly</li>
+</ul>
+</li>
+<li>简单例子</li>
+<li>对比实验<ul>
+<li>三种方式的对比</li>
+<li>xcodebuild+xcrun和仅xcodebuild的比较</li>
+<li>命令到底做了什么</li>
+</ul>
+</li>
+<li>总结</li>
+</ul>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>现在涉及到编译打包的工作主要是以下两个：</p>
+<ol>
+<li>提交测试版本给测试同事</li>
+<li>提交App Store审核</li>
+</ol>
+<p>两个流程分别是：</p>
+<ul>
+<li>修改证书和配置文件，然后「Product -&gt; Archive」编译打包，之后在自动弹出的 「Organizer」 中进行选择，根据需要导出 ad hoc enterprise 类型的 ipa 包。等待导出之后再提交到Fir上，等Fir提交完成就需要告知测试同事。整个流程下来一般都要半个多小时，而且需要人工监守操作。</li>
+<li>第二个也是差不多，打包完之后需要操作几个步骤然后上传到App Store，上传时间较长，而且中间可能会有错误需要处理。上传后等待苹果处理二进制包，苹果处理后上去选择构建包，点击提交审核。</li>
+</ul>
+<p>所以研究下自动化编译打包，提高下效率，减少人工操作成本。</p>
+<p>主要有两种实现途径，AppleScript和Shell脚本，<code>AppleScript</code>没怎么研究，网上说是很强大的脚本语言。</p>
+<p>下面主要讲Shell脚本的实现，网上也有人实现了并托管在<code>github</code>上，可以参考下。</p>
+<blockquote>
+<p><a href="https://github.com/webfrogs/xcode_shell" target="_blank" rel="noopener">https://github.com/webfrogs/xcode_shell</a></p>
+</blockquote>
+<h1 id="Shell脚本涉及的工具"><a href="#Shell脚本涉及的工具" class="headerlink" title="Shell脚本涉及的工具"></a>Shell脚本涉及的工具</h1><p>主要是以下几个工具：</p>
+<ol>
+<li>xcodebuild</li>
+<li>xcrun</li>
+<li>altool（提交到App Store使用）</li>
+<li>fir-cli（上传到fir时使用）</li>
+<li>Python的smtplib（之前已经写过python的发邮件了，所以就直接用没有用Shell写。）</li>
+<li>PlistBuddy</li>
+<li>BuglySymboliOS（Bugly的符号表工具包）</li>
+</ol>
+<h2 id="xcodebuild和xcrun"><a href="#xcodebuild和xcrun" class="headerlink" title="xcodebuild和xcrun"></a>xcodebuild和xcrun</h2><p><code>xcodebuild</code>和<code>xcrun</code>都是来自<code>Command Line Tools</code>，Xcode自带，如果没有可以通过以下命令安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
+<p>或者在下面的链接下载安装：</p>
+<blockquote>
+<p> <a href="https://developer.apple.com/downloads/" target="_blank" rel="noopener">https://developer.apple.com/downloads/</a> </p>
+</blockquote>
+<p>安装完可在以下路径看到这两个工具：</p>
+<blockquote>
+<p>/Applications/Xcode.app/Contents/Developer/usr/bin/</p>
+</blockquote>
+<ul>
+<li>xcodebuild<br>主要是用来编译，打包成Archive和导出ipa包。</li>
+</ul>
+<blockquote>
+<p><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html" target="_blank" rel="noopener">https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html</a></p>
+</blockquote>
+<p>可以执行 <code>xcodebuild -help</code> 查看，主要展示了几种用法、一些可选项，最后是比较重要的exportOptionsPlist文件的一些可选key，这个文件在后面导出ipa包会用到。</p>
+<p>主要下面三个查看的命令比较重要：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-showsdks                           display a compact list of the installed SDKs</span><br><span class="line">-showBuildSettings                  display a list of build settings and values</span><br><span class="line">-list                               lists the targets and configurations in a project, or the schemes in a workspace</span><br></pre></td></tr></table></figure></p>
+<p>后面两个需要在Xcode的project或者workspace目录下才能用。</p>
+<ul>
+<li>xcrun<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcrun -h</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>主要是打包，看网上比较多是用这个工具打包各种渠道包。</p>
+<h2 id="altool"><a href="#altool" class="headerlink" title="altool"></a>altool</h2><p>这个工具在网上搜索几乎没有什么结果，大概国内直接用命令行工具提交App Store的比较少。后来在StackOverflow上才找到相关的文档：</p>
+<blockquote>
+<p><a href="https://itunesconnect.apple.com/docs/UsingApplicationLoader.pdf" target="_blank" rel="noopener">https://itunesconnect.apple.com/docs/UsingApplicationLoader.pdf</a></p>
+</blockquote>
+<p>在上面的文档第38页讲述了如何使用altool上传二进制文件。</p>
+<p>这个工具实际上是ApplicationLoader，打开Xcode-左上角Xcode-Open Developer Tool-Application Loader 可看到。有个“交付您的应用”操作，网上看到有人是直接用这个工具上传的。</p>
+<p>altool的路径是：</p>
+<blockquote>
+<p>/Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Support/altool</p>
+</blockquote>
+<p>使用时会提示下面的错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">altool[] *** Error: Exception while launching iTunesTransporter: </span><br><span class="line">Transporter not found at path: /usr/local/itms/bin/iTMSTransporter. </span><br><span class="line">You should reinstall the application.</span><br></pre></td></tr></table></figure></p>
+<p>建立个软链接可解决（类似于Windows的快捷方式）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s /Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/itms /usr/local/itms</span><br></pre></td></tr></table></figure></p>
+<h2 id="fir-cli"><a href="#fir-cli" class="headerlink" title="fir-cli"></a>fir-cli</h2><p>安装时会提示各种权限不允许，可以执行下面命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &apos;gem: --bindir /usr/local/bin&apos; &gt;&gt; ~/.gemrc</span><br><span class="line">sudo &apos;gem install fir-cli</span><br></pre></td></tr></table></figure>
+<p>fir有提供Android Studio、Eclipse、gradle插件，可以看下。</p>
+<blockquote>
+<p><a href="http://fir.im/tools" target="_blank" rel="noopener">http://fir.im/tools</a></p>
+</blockquote>
+<p>这是它的github地址，其中讲到有对?<code>xcodebuild</code>?原生指令进行了封装。</p>
+<blockquote>
+<p><a href="https://github.com/FIRHQ/fir-cli/blob/master/README.md" target="_blank" rel="noopener">https://github.com/FIRHQ/fir-cli/blob/master/README.md</a></p>
+</blockquote>
+<h2 id="PlistBuddy"><a href="#PlistBuddy" class="headerlink" title="PlistBuddy"></a>PlistBuddy</h2><p>Plist在Mac OSX系统中起着举足轻重的作用，系统和程序使用Plist文件来存储自己的安装/配置/属性等信息。而PlistBuddy是Mac里一个用于命令行下读写plist文件的工具，在/usr/libexec/下。可以通过它读取或修改plist文件的内容。</p>
+<p>这里我仅通过它来获取内部版本号、外部版本号。在一些文章中见过用来修改plist文件的信息来导出出不同需要的包。</p>
+<h1 id="一些概念的区别"><a href="#一些概念的区别" class="headerlink" title="一些概念的区别"></a>一些概念的区别</h1><p>Workspace、Project、Scheme、Target的区别。</p>
+<p>下面是官方文档：</p>
+<blockquote>
+<p><a href="https://developer.apple.com/library/ios/featuredarticles/XcodeConcepts/Concept-Targets.html#//apple_ref/doc/uid/TP40009328-CH4-SW1" target="_blank" rel="noopener">https://developer.apple.com/library/ios/featuredarticles/XcodeConcepts/Concept-Targets.html#//apple_ref/doc/uid/TP40009328-CH4-SW1</a></p>
+</blockquote>
+<p>下面从上往下大概说下，具体看文档比较好：</p>
+<ul>
+<li><p>Workspace<br><code>Workspace</code>是最大的集合，可以包含多个<code>Project</code>，可以管理不同的<code>Project</code>之间的关系。<code>Workspace</code>是以<code>xcworkspace</code>的文件形式存在的。（这点和<code>Project</code>一致）。<code>Workspace</code>的存在是为了解决原来仅有<code>Project</code>的时候不同的<code>Project</code>之间的引用和调用困难的问题。同时，一个<code>Workspace</code>的<code>Project</code>共用一个编译路径。比如使用CocoaPod、或者使用其他开发库/框架。</p>
+</li>
+<li><p>Project<br><code>Project</code>是一个仓库，包含编译一个或多个<code>product</code>所需的文件、资源和信息，保持和聚合这些元素间的关系。（每个<code>Target</code>能指定自己的<code>Build Settings</code>来覆盖<code>Project</code>的）</p>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>Source code, including header files and implementation files</li>
+<li>Libraries and frameworks, internal and external</li>
+<li>Resource files</li>
+<li>Image files</li>
+<li>Interface Builder (nib) files</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>Scheme<br><code>Scheme</code>包含了一些要构建的Scheme，一些构建时用到的设置，一些要运行的测试。同时只能有一个<code>Scheme</code>是有效的。</p>
+</li>
+<li><p>Target<br><code>Target</code>是对应了具体一个想要构建的<code>Product</code>,包含了一些构建这个<code>Product</code>所需的配置和文件（<code>build settings</code>和<code>build phases</code>）。一个<code>Project</code>可以包含多个<code>Target</code>。</p>
+</li>
+</ul>
+<h1 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h1><p>看起来有两种实现方法：</p>
+<ul>
+<li>网上可以查到的文章，大多数都是用<code>xcodebuild</code>和<code>xcrun</code>实现的，比如：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild -workspace XXX -scheme XXX -configuration Release</span><br><span class="line">xcrun -sdk iphoneos PackageApplication -v &quot;/XXX/XXX.app&quot; -o &quot;/XXX/XXX&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这些文章都是相对比早期的，大多数用于打包不同渠道包。</p>
+<ul>
+<li>另一种是<code>xcodebuild</code>的<code>archive</code>和<code>-exportArchive</code>，只有一两篇文章是用这个，而且也过时了，因为现在最新是需要用<code>-exportOptionsPlist</code>这个选项。</li>
+</ul>
+<p>我用的是第二种，并用上<code>-exportOptionsPlist</code>选项，后面我会简单给下这两种的结果比较。脚本流程是：</p>
+<ol>
+<li>准备两个<code>Plist</code>文件，用于导出不同<code>ipa</code>包时使用。</li>
+<li>获取命令行参数，区分上传到<code>Fir</code>还是<code>App Store</code></li>
+<li>清理构建目录</li>
+<li>编译打包</li>
+<li>导出包</li>
+<li>上传到<code>Fir</code>或者验证并上传到<code>App Store</code></li>
+<li>发邮件通知</li>
+</ol>
+<h2 id="准备Plist文件"><a href="#准备Plist文件" class="headerlink" title="准备Plist文件"></a>准备Plist文件</h2><p>根据<code>xcodebuild -help</code>提供的可选key可以知道，<code>compileBitcode</code>、<code>embedOnDemandResourcesAssetPacksInBundle</code>、<code>iCloudContainerEnvironment</code>、<code>manifest</code>、<code>onDemandResourcesAssetPacksBaseURL</code>、<code>thinning</code>这几个key用于非<code>App Store</code>导出的；<code>uploadBitcode</code>、<code>uploadSymbols</code>用于<code>App Store</code>导出；<code>method</code>、<code>teamID</code>共用。</p>
+<p>method的可选值为:</p>
+<blockquote>
+<p>app-store, package, ad-hoc, enterprise, development, and developer-id</p>
+</blockquote>
+<p>所以我建了两个文件：<code>AppStoreExportOptions.plist</code>、<code>AdHocExportOptions.plist</code>。</p>
+<p>AppStoreExportOptions.plist：method＝app-store，uploadBitcode＝YES，uploadSymbols＝YES</p>
+<p>AdHocExportOptions.plist：method＝ad-hoc，compileBitcode＝NO</p>
+<h2 id="获取命令行参数"><a href="#获取命令行参数" class="headerlink" title="获取命令行参数"></a>获取命令行参数</h2><p>用<code>Shell</code>内置的<code>getopts</code>命令，这属于Shell的范畴就不多讲了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">if [ $# -lt 1 ];then</span><br><span class="line">    echo &quot;Error! Should enter the archive type (AdHoc or AppStore).&quot;</span><br><span class="line">    echo &quot;&quot;</span><br><span class="line">    exit 2</span><br><span class="line">fi</span><br><span class="line">while getopts &apos;t:&apos; optname</span><br><span class="line">do</span><br><span class="line">    case &quot;$optname&quot; in</span><br><span class="line">    t)</span><br><span class="line">        if [ $&#123;OPTARG&#125; != &quot;AdHoc&quot; ] &amp;&amp; [ $&#123;OPTARG&#125; != &quot;AppStore&quot; ];then</span><br><span class="line">            echo &quot;invalid parameter of $OPTARG&quot;</span><br><span class="line">            echo &quot;&quot;</span><br><span class="line">            exit 1</span><br><span class="line">        fi</span><br><span class="line">        type=$&#123;OPTARG&#125;</span><br><span class="line">        ;;</span><br><span class="line">    *)</span><br><span class="line">        echo &quot;Error! Unknown error while processing options&quot;</span><br><span class="line">        echo &quot;&quot;</span><br><span class="line">        exit 2</span><br><span class="line">        ;;</span><br><span class="line">    esac</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h2 id="清理构建目录"><a href="#清理构建目录" class="headerlink" title="清理构建目录"></a>清理构建目录</h2><p>就如在Xcode操作「Product -&gt; Clean」。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_path=&quot;/XXX/XXX&quot;</span><br><span class="line">configuration=&quot;Release&quot;</span><br><span class="line">xcodebuild clean -configuration &quot;$configuration&quot; -alltargets &gt;&gt; $log_path</span><br></pre></td></tr></table></figure>
+<p>log_path是一个文档路径，只是用来记录命令的输出，因为都打在终端会很多，另外也方便后面分析。后面的命令也是如此。这里面带的选项可以根据需要参考<code>xcodebuild -help</code>的信息。</p>
+<h2 id="编译打包成Archive"><a href="#编译打包成Archive" class="headerlink" title="编译打包成Archive"></a>编译打包成Archive</h2><p>就如在Xcode操作「Product -&gt; Archive」</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">workspaceName=&quot;XXX.xcworkspace&quot;</span><br><span class="line">scheme=&quot;XXX&quot;</span><br><span class="line">configurationBuildDir=&quot;XXX/build&quot;</span><br><span class="line">codeSignIdentity=&quot;iPhone Distribution: XXX, Ltd. (xxxxxxxxxx)&quot;</span><br><span class="line">adHocProvisioningProfile=&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><br><span class="line">appStoreProvisioningProfile=&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><br><span class="line">configuration=&quot;Release&quot;</span><br><span class="line">archivePath=&quot;/xxx/XXX.xcarchive&quot;</span><br><span class="line"></span><br><span class="line">xcodebuild archive -workspace &quot;$workspaceName&quot; -scheme &quot;$scheme&quot; -configuration &quot;$configuration&quot; -archivePath &quot;$archivePath&quot; CONFIGURATION_BUILD_DIR=&quot;$configurationBuildDir&quot; CODE_SIGN_IDENTITY=&quot;$codeSignIdentity&quot; PROVISIONING_PROFILE=&quot;$provisioningProfile&quot; &gt;&gt; $log_path</span><br></pre></td></tr></table></figure>
+<p>这里的<code>CONFIGURATION_BUILD_DIR</code>是中间文件生成的路径，可以不指定；<code>CODE_SIGN_IDENTITY</code>是证书名（在对应<code>TARGETS</code>的<code>Build Settings</code>中选择完<code>Code Sinning</code>，再点击选择<code>Other...</code>，就可以得到这串东西）；<code>PROVISIONING_PROFILE</code>是配置文件（获取方法同CODE_SIGN_IDENTITY，格式一般是<code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code>）。还可以添加其他参数，不设置的都是默认使用项目Build Settings里面的配置，包括<code>CODE_SIGN_IDENTITY</code>和<code>PROVISIONING_PROFILE</code>。</p>
+<p>如果是workspace就用<code>-workspace</code>，就像编译带有<code>CocoaPods</code>的项目，如果是普通项目则用<code>-project</code>。</p>
+<p>执行完会生成一个.xcarchive文件和build文件夹如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.xcarchive</span><br><span class="line">build文件夹</span><br><span class="line">	|------.a</span><br><span class="line">	|------.app</span><br><span class="line">	|------.app.dSYM</span><br><span class="line">	|------.swiftmodule文件夹</span><br><span class="line">		|------arm.swiftdoc</span><br><span class="line">		|------arm.swiftmodule</span><br><span class="line">		|------arm64.swiftdoc</span><br><span class="line">		|------arm64.swiftmodule</span><br></pre></td></tr></table></figure>
+<h2 id="将Archive导出"><a href="#将Archive导出" class="headerlink" title="将Archive导出"></a>将Archive导出</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild -exportArchive -archivePath &quot;$archivePath&quot; -exportOptionsPlist &quot;$exportOptionsPlist&quot; -exportPath &quot;/XXX/XXX&quot; &gt;&gt; $log_path</span><br></pre></td></tr></table></figure>
+<p>其中<code>$exportOptionsPlist</code>是对应使用的Plist的完整路径（包括文件名）。</p>
+<p>然后就会在指定的<code>exportPath</code>路径下生成.ipa文件。</p>
+<h2 id="上传到Fir"><a href="#上传到Fir" class="headerlink" title="上传到Fir"></a>上传到Fir</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">firApiToken=&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span><br><span class="line">ipaPath=&quot;/xxx/xxx.ipa&quot;</span><br><span class="line">fir publish &quot;$ipaPath&quot; -T &quot;$firApiToken&quot; &gt;&gt; $log_path</span><br></pre></td></tr></table></figure>
+<p><code>firApiToken</code>在登录Fir后，右上角-API token看到。</p>
+<h2 id="验证并上传到App-Store"><a href="#验证并上传到App-Store" class="headerlink" title="验证并上传到App Store"></a>验证并上传到App Store</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">altoolPath=&quot;/Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool&quot;</span><br><span class="line">$&#123;altoolPath&#125; --validate-app -f $&#123;ipaPath&#125; -u xxxxxx -p xxxxxx -t ios --output-format xml &gt;&gt;</span><br><span class="line">$&#123;altoolPath&#125; --upload-app -f $&#123;ipaPath&#125; -u xxxxxx -p xxxxxx -t ios --output-format xml</span><br></pre></td></tr></table></figure>
+<p>在上面的PDF文档第38页讲明了用法和各个可选项，具体可以看下PDF。需要说明的是，生成的结果是xml打印在终端，可以保存到文档再解析出key来判断是否成功，目前这步还没做。</p>
+<p>这是成功的结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span><br><span class="line">&lt;plist version=&quot;1.0&quot;&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">	&lt;key&gt;os-version&lt;/key&gt;</span><br><span class="line">	&lt;string&gt;10.11.2&lt;/string&gt;</span><br><span class="line">	&lt;key&gt;success-message&lt;/key&gt;</span><br><span class="line">	&lt;string&gt;No errors validating archive at /XXX/XXX.ipa&lt;/string&gt;</span><br><span class="line">	&lt;key&gt;tool-version&lt;/key&gt;</span><br><span class="line">	&lt;string&gt;1.1.902&lt;/string&gt;</span><br><span class="line">	&lt;key&gt;xcode-versions&lt;/key&gt;</span><br><span class="line">	&lt;array&gt;</span><br><span class="line">		&lt;dict&gt;</span><br><span class="line">			&lt;key&gt;path&lt;/key&gt;</span><br><span class="line">			&lt;string&gt;/Applications/Xcode.app&lt;/string&gt;</span><br><span class="line">			&lt;key&gt;version.plist&lt;/key&gt;</span><br><span class="line">			&lt;dict&gt;</span><br><span class="line">				&lt;key&gt;BuildVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;7&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;7.2&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;CFBundleVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;9548&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;ProductBuildVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;7C68&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;ProjectName&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;IDEFrameworks&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;SourceVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;9548000000000000&lt;/string&gt;</span><br><span class="line">			&lt;/dict&gt;</span><br><span class="line">		&lt;/dict&gt;</span><br><span class="line">	&lt;/array&gt;</span><br><span class="line">&lt;/dict&gt;</span><br><span class="line">&lt;/plist&gt;</span><br></pre></td></tr></table></figure>
+<p>这是失败的结果（找不到iTMSTransporter的情况，用前面说的ln -s解决）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span><br><span class="line">&lt;plist version=&quot;1.0&quot;&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">	&lt;key&gt;os-version&lt;/key&gt;</span><br><span class="line">	&lt;string&gt;10.11.2&lt;/string&gt;</span><br><span class="line">	&lt;key&gt;product-errors&lt;/key&gt;</span><br><span class="line">	&lt;array&gt;</span><br><span class="line">		&lt;dict&gt;</span><br><span class="line">			&lt;key&gt;code&lt;/key&gt;</span><br><span class="line">			&lt;integer&gt;-10001&lt;/integer&gt;</span><br><span class="line">			&lt;key&gt;message&lt;/key&gt;</span><br><span class="line">			&lt;string&gt;Transporter not found at path: /usr/local/itms/bin/iTMSTransporter.  You should reinstall the application.&lt;/string&gt;</span><br><span class="line">			&lt;key&gt;userInfo&lt;/key&gt;</span><br><span class="line">			&lt;dict&gt;</span><br><span class="line">				&lt;key&gt;MZUnderlyingException&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;Transporter not found at path: /usr/local/itms/bin/iTMSTransporter.  You should reinstall the application.&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;NSLocalizedDescription&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;Transporter not found at path: /usr/local/itms/bin/iTMSTransporter.  You should reinstall the application.&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;NSLocalizedFailureReason&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;Transporter not found at path: /usr/local/itms/bin/iTMSTransporter.  You should reinstall the application.&lt;/string&gt;</span><br><span class="line">			&lt;/dict&gt;</span><br><span class="line">		&lt;/dict&gt;</span><br><span class="line">	&lt;/array&gt;</span><br><span class="line">	&lt;key&gt;tool-version&lt;/key&gt;</span><br><span class="line">	&lt;string&gt;1.1.902&lt;/string&gt;</span><br><span class="line">	&lt;key&gt;xcode-versions&lt;/key&gt;</span><br><span class="line">	&lt;array&gt;</span><br><span class="line">		&lt;dict&gt;</span><br><span class="line">			&lt;key&gt;path&lt;/key&gt;</span><br><span class="line">			&lt;string&gt;/Applications/Xcode.app&lt;/string&gt;</span><br><span class="line">			&lt;key&gt;version.plist&lt;/key&gt;</span><br><span class="line">			&lt;dict&gt;</span><br><span class="line">				&lt;key&gt;BuildVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;7&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;7.2&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;CFBundleVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;9548&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;ProductBuildVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;7C68&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;ProjectName&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;IDEFrameworks&lt;/string&gt;</span><br><span class="line">				&lt;key&gt;SourceVersion&lt;/key&gt;</span><br><span class="line">				&lt;string&gt;9548000000000000&lt;/string&gt;</span><br><span class="line">			&lt;/dict&gt;</span><br><span class="line">		&lt;/dict&gt;</span><br><span class="line">	&lt;/array&gt;</span><br><span class="line">&lt;/dict&gt;</span><br><span class="line">&lt;/plist&gt;</span><br></pre></td></tr></table></figure>
+<p>可见，成功会有个<code>success-message</code>的key，而失败会有<code>product-errors</code>的key。</p>
+<h2 id="邮件通知相关同事"><a href="#邮件通知相关同事" class="headerlink" title="邮件通知相关同事"></a>邮件通知相关同事</h2><p>发邮件时可能会想带上当前版本的一些信息，如版本号、内部版本号等，可以用PlistBuddy实现读取甚至修改Plist文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">appInfoPlistPath=&quot;`pwd`/xxx/xxx-Info.plist&quot;</span><br><span class="line">bundleShortVersion=$(/usr/libexec/PlistBuddy -c &quot;print CFBundleShortVersionString&quot; $&#123;appInfoPlistPath&#125;)</span><br><span class="line">bundleVersion=$(/usr/libexec/PlistBuddy -c &quot;print CFBundleVersion&quot; $&#123;appInfoPlistPath&#125;)</span><br></pre></td></tr></table></figure>
+<p>之后便是发邮件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sendEmail.py &quot;测试版本 iOS $&#123;bundleShortVersion&#125;($&#123;bundleVersion&#125;)上传成功&quot; &quot;赶紧下载体验吧！http://fir.im/meijia&quot;</span><br></pre></td></tr></table></figure>
+<p>或者<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sendEmail.py &quot;正式版本 iOS $&#123;bundleShortVersion&#125;($&#123;bundleVersion&#125;)提交成功&quot; &quot;iOS $&#123;bundleShortVersion&#125; 提交成功！&quot;</span><br></pre></td></tr></table></figure></p>
+<p>python主要用smtplib，网上的文章大多都是旧的，特别是讲到SSL时特别复杂，其实具体看下smtplib的接口文档就可以实现了。另外有可能出现标题、内容乱码的现象。整合了下面的链接解决了：</p>
+<p>下面是实现了SSL Smtp登录的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line">#coding: utf-8</span><br><span class="line"></span><br><span class="line"># sendEmail title content</span><br><span class="line">import sys</span><br><span class="line">import smtplib</span><br><span class="line">from email.mime.text import MIMEText</span><br><span class="line">from email.header import Header</span><br><span class="line"></span><br><span class="line">sender = &apos;xxxxxx@qq.com;&apos;</span><br><span class="line">receiver = &apos;xxx@qq.com;&apos;</span><br><span class="line">smtpserver = &apos;smtp.qq.com&apos;</span><br><span class="line">#smtpserver = &apos;smtp.exmail.qq.com&apos;</span><br><span class="line"></span><br><span class="line">username = sender</span><br><span class="line">password = &apos;xxxxxx&apos;</span><br><span class="line"></span><br><span class="line">def send_mail(title, content):</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line">        msg = MIMEText(content,&apos;plain&apos;,&apos;utf-8&apos;)</span><br><span class="line">        if not isinstance(title,unicode):</span><br><span class="line">            title = unicode(title, &apos;utf-8&apos;)</span><br><span class="line">        msg[&apos;Subject&apos;] = title</span><br><span class="line">        msg[&apos;From&apos;] = sender</span><br><span class="line">        msg[&apos;To&apos;] = receiver</span><br><span class="line">        msg[&quot;Accept-Language&quot;]=&quot;zh-CN&quot;</span><br><span class="line">        msg[&quot;Accept-Charset&quot;]=&quot;ISO-8859-1,utf-8&quot;</span><br><span class="line"></span><br><span class="line">        smtp = smtplib.SMTP_SSL(smtpserver,465)</span><br><span class="line">        smtp.login(username, password)</span><br><span class="line">        smtp.sendmail(sender, receiver, msg.as_string())</span><br><span class="line">        smtp.quit()</span><br><span class="line">        return True</span><br><span class="line">    except Exception, e:</span><br><span class="line">        print str(e)</span><br><span class="line">        return False</span><br><span class="line"></span><br><span class="line">if send_mail(sys.argv[1], sys.argv[2]):</span><br><span class="line">    print &quot;done!&quot;</span><br><span class="line">else:</span><br><span class="line">    print &quot;failed!&quot;</span><br></pre></td></tr></table></figure>
+<p>可以赋值给msg[‘CC’]实现抄送，经过测试，抄送的人过多会有一部分不成功，网上查了是这个库的bug。发送多个人用分号，另外末尾也要用分号。</p>
+<h2 id="上传符号表到Bugly"><a href="#上传符号表到Bugly" class="headerlink" title="上传符号表到Bugly"></a>上传符号表到Bugly</h2><p>用于分析解决崩溃bug挺好用的，而且他们的客服也很及时。<br>发现他们的2.4.1版本有问题，反馈后他们给了2.4.3版本，经测试没问题。</p>
+<ol>
+<li><p>在Bugly官网下载<a href="https://bugly.qq.com/whitebook" target="_blank" rel="noopener">符号表工具</a></p>
+</li>
+<li><p>设置settings.txt</p>
+</li>
+<li><p>调用命令</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar buglySymboliOS.jar -d -i $dSYM -u -id &quot;xxxxxxxxx&quot; -key &quot;xxxxxxxxxxx&quot; -package &quot;com.xxx.xxx&quot; -version &quot;$version&quot; ­-o &quot;xxx.zip&quot;</span><br></pre></td></tr></table></figure>
+<p>注意版本号之类的要设置对。</p>
+<h1 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h1><p>清理构建目录：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild clean -configuration Release -alltargets</span><br></pre></td></tr></table></figure></p>
+<p>归档（其他参数不指定的话，默认用的是.xcworkspace或.xcodeproj文件里的配置）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild archive -workspace xxx.xcworkspace -scheme xxx -configuration Release -archivePath ./xxx.xcarchive</span><br></pre></td></tr></table></figure></p>
+<p>导出IPA<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcodebuild -exportArchive -archivePath ./xxx.xcarchive -exportOptionsPlist ./AdHocExportOptions.plist -exportPath ./</span><br></pre></td></tr></table></figure></p>
+<p>上传FIR<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fir publish ./xxx.ipa -T xxxxxx</span><br></pre></td></tr></table></figure></p>
+<p>提交AppStore<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool --validate-app -f ./xxx.ipa -u xxx -p xxx -t ios --output-format xml</span><br><span class="line">/Applications/Xcode.app/Contents/Applications/Application Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Versions/A/Support/altool --upload-app -f ./xxx.ipa -u xxx -p xxx -t ios --output-format xml</span><br></pre></td></tr></table></figure></p>
+<p>发邮件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sendEmail.py &quot;邮件内容&quot; &quot;用户名&quot; &quot;密码&quot;</span><br></pre></td></tr></table></figure></p>
+<p>上传符号表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar buglySymboliOS.jar -d -i $dSYM -u -id &quot;xxxxxxxxx&quot; -key &quot;xxxxxxxxxxx&quot; -package &quot;com.xxx.xxx&quot; -version &quot;$version&quot; ­-o &quot;xxx.zip&quot;</span><br></pre></td></tr></table></figure></p>
+<h1 id="对比实验"><a href="#对比实验" class="headerlink" title="对比实验"></a>对比实验</h1><p>为了了解一些区别，我做了几个对比。我这里定义下三种方式，方便下面说明。</p>
+<ul>
+<li>xcodebuild+xcrun（xcodebuild build和xcrun）</li>
+<li>只用xcodebuild（archive和exportArchive），</li>
+<li>Xcode。</li>
+</ul>
+<h2 id="三种方式的对比"><a href="#三种方式的对比" class="headerlink" title="三种方式的对比"></a>三种方式的对比</h2><p>我使用xcodebuild+xcrun、仅xcodebuild、Xcode三种分别对相同代码和配置进行操作，根据结果做比较：</p>
+<ul>
+<li>xcodebuild+xcrun</li>
+</ul>
+<p>ipa：40.7MB，.app：93.3MB，编译耗时：8m31s，打包耗时：15s。</p>
+<ul>
+<li>仅xcodebuild</li>
+</ul>
+<p>ipa：37.3MB，.app：74MB，.xcarchive：227.3MB，编译耗时：8m24s，打包耗时：26s。</p>
+<ul>
+<li>Xcode</li>
+</ul>
+<p>ipa：37.3MB，.app：74MB，.xcarchive：227.3MB，编译耗时：8m40s，打包耗时：30s。</p>
+<p>Xcode生成的<code>.xcarchive</code>文件可以在以下路径看到：</p>
+<blockquote>
+<p>/Users/double/Library/Developer/Xcode/Archives</p>
+</blockquote>
+<p>可以看出，<u>仅使用xcodebuild的结果和使用Xcode编译打包的结果是一致的</u>，并且最终的ipa也可以正常安装使用。而第一种xcodebuild+xcrun的结果略大些，但是ipa也是可以正常使用的。这时需要了解下他们的区别。</p>
+<h2 id="xcodebuild-xcrun和仅xcodebuild的比较"><a href="#xcodebuild-xcrun和仅xcodebuild的比较" class="headerlink" title="xcodebuild+xcrun和仅xcodebuild的比较"></a>xcodebuild+xcrun和仅xcodebuild的比较</h2><ul>
+<li>使用xcrun打包方式二产生的.xcarchive中的.app</li>
+</ul>
+<p>打包生成的.ipa文件大小同样为37.3MB，与方式二使用Xcodebuild -exportArchive的结果一致！这样说明：<strong>使用xcrun的打包方法是正常的</strong>，和xcodebuild -exportArchive的结果一致，而且<strong>.ipa包仅和.app有关</strong>。那么说明，<u>这两种方式的不同仅在于xcodebuild build和xcodebuild archive之间的不同</u>。</p>
+<ul>
+<li>删除.xcarchive中其他文件然后<code>exportArchive</code></li>
+</ul>
+<p>这时命令提示错误，但是上面我们已经得出结论.ipa的生成只和.app有关，所以可能的原因是，这个<code>exportArchive</code>命令会检查.archive的完整性和正确性，防止生成的.archive不完整或者是伪造的。下面做个实验看下。</p>
+<h2 id="命令到底做了什么"><a href="#命令到底做了什么" class="headerlink" title="命令到底做了什么"></a>命令到底做了什么</h2><p>根据命令运行时输出的内容，看下中间做了什么</p>
+<ul>
+<li>xcrun -sdk iphoneos PackageApplication -v xxx.app -o xxx.ipa</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Packaging application: &apos;/xxx/xxx.app&apos;</span><br><span class="line">Arguments: output=/xxx/xxx.ipa  verbose=1  </span><br><span class="line">Environment variables:</span><br><span class="line">SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.2.sdk</span><br><span class="line">......</span><br><span class="line">SHELL = /bin/bash</span><br><span class="line"></span><br><span class="line">Output directory: &apos;/xxx/xxx.ipa&apos;</span><br><span class="line">Temporary Directory: &apos;/var/folders/21/6s9bb23j0s1343pm7ltnlgpm0000gn/T/taOIiK9AyK&apos;  (will NOT be deleted on exit when verbose set)</span><br><span class="line">+ /bin/cp -Rp /xxx/xxx.app /var/folders/21/6s9bb23j0s1343pm7ltnlgpm0000gn/T/taOIiK9AyK/Payload</span><br><span class="line">Program /bin/cp returned 0 : []</span><br><span class="line">### Checking original app</span><br><span class="line">+ /usr/bin/codesign --verify -vvvv /xxx/xxx.app</span><br><span class="line">Program /usr/bin/codesign returned 0 : [/xxx/xxx.app: valid on disk</span><br><span class="line">/xxx/xxx.xcarchive/Products/Applications/xxx.app: satisfies its Designated Requirement</span><br><span class="line">]</span><br><span class="line">Done checking the original app</span><br><span class="line">+ /usr/bin/zip --symlinks --verbose --recurse-paths /Users/double/Desktop/1.ipa .</span><br><span class="line">Program /usr/bin/zip returned 0 : [  adding: Payload/	(in=0) (out=0) (stored 0%)</span><br><span class="line">  adding: Payload/xxx.app/	(in=0) (out=0) (stored 0%)</span><br><span class="line">  ......</span><br></pre></td></tr></table></figure>
+<p>主要检查了环境变量，然后验证签名，然后压缩（看到了吗，居然是/usr/bin/zip），后面adding的基本都是.nib和.png等的压缩。看起来.archive只是一种压缩形式，包含了.app、.dSYM、.plist和其他一些文件。</p>
+<p>这里的<code>codesign</code>工具就是签名相关的，可以查看说明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SYNOPSIS</span><br><span class="line">     codesign -s identity [-i identifier] [-r requirements] [-fv] [path ...]</span><br><span class="line">     codesign -v [-R requirement] [-v] [path|pid ...]</span><br><span class="line">     codesign -d [-v] [path|pid ...]</span><br><span class="line">     codesign -h [-v] [pid ...]</span><br></pre></td></tr></table></figure>
+<p>-s是签名，-v是验证。所以可以在.app生成后再签名。</p>
+<ul>
+<li>xcodebuild clean</li>
+</ul>
+<p>清理工作，根据参数删除指定的workplace、target、configuration（release或debug） 的中间文件，都是工程目录下的build文件夹。</p>
+<ul>
+<li>xcodebuild archive</li>
+</ul>
+<p>下面是里面主要的步骤：</p>
+<ol>
+<li>Create product structure 创建.app文件</li>
+<li>CompileC 编译文件（clang编译，指定了编译的SDK版本和指令集）</li>
+<li>Ld</li>
+<li>CreateUniversalBinary (lipo)</li>
+<li>CompileStoryboard (ibtool )</li>
+<li>CompileAssetCatalog (actool )</li>
+<li>ProcessInfoPlistFile (builtin-infoPlistUtility )</li>
+<li>GenerateDSYMFile (dsymutil )</li>
+<li>LinkStoryboards(ibtool )</li>
+<li>Strip </li>
+<li>ProcessProductPackaging (builtin-productPackagingUtility )</li>
+<li>CodeSign (codesign –force –sign)</li>
+<li>Validate (builtin-validationUtility )</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>呼呼写了这么多，终于到总结部分了。这个过程学到了很多东西，脚本成果确实方便了很多，减少了编译打包过程中人工监守、人工操作的成本，并且测试和提交到appStore的包都验证过可用。</p>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://zackzheng.info">https://zackzheng.info</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/shell/" rel="tag"># shell</a>
+          
+            <a href="/tags/持续集成/" rel="tag"># 持续集成</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/05/review-of-the-devil's-advocate/" rel="next" title="《The Devil's Advocate》观后感">
+                <i class="fa fa-chevron-left"></i> 《The Devil's Advocate》观后感
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/17/ios-devices-info/" rel="prev" title="iOS所有设备的分辨率、尺寸和缩放因子，放大模式区别和6P实际分辨率">
+                iOS所有设备的分辨率、尺寸和缩放因子，放大模式区别和6P实际分辨率 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Zack Zheng">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <div class="site-description motion-element" itemprop="description">Zack Zheng's Blog</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/sapphirezzz" title="GitHub &rarr; https://github.com/sapphirezzz" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhengzuanzhe@gmail.com" title="E-Mail &rarr; mailto:zhengzuanzhe@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Shell脚本涉及的工具"><span class="nav-number">3.</span> <span class="nav-text">Shell脚本涉及的工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#xcodebuild和xcrun"><span class="nav-number">3.1.</span> <span class="nav-text">xcodebuild和xcrun</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#altool"><span class="nav-number">3.2.</span> <span class="nav-text">altool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fir-cli"><span class="nav-number">3.3.</span> <span class="nav-text">fir-cli</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PlistBuddy"><span class="nav-number">3.4.</span> <span class="nav-text">PlistBuddy</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些概念的区别"><span class="nav-number">4.</span> <span class="nav-text">一些概念的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体实现"><span class="nav-number">5.</span> <span class="nav-text">具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备Plist文件"><span class="nav-number">5.1.</span> <span class="nav-text">准备Plist文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取命令行参数"><span class="nav-number">5.2.</span> <span class="nav-text">获取命令行参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#清理构建目录"><span class="nav-number">5.3.</span> <span class="nav-text">清理构建目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译打包成Archive"><span class="nav-number">5.4.</span> <span class="nav-text">编译打包成Archive</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将Archive导出"><span class="nav-number">5.5.</span> <span class="nav-text">将Archive导出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上传到Fir"><span class="nav-number">5.6.</span> <span class="nav-text">上传到Fir</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证并上传到App-Store"><span class="nav-number">5.7.</span> <span class="nav-text">验证并上传到App Store</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#邮件通知相关同事"><span class="nav-number">5.8.</span> <span class="nav-text">邮件通知相关同事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上传符号表到Bugly"><span class="nav-number">5.9.</span> <span class="nav-text">上传符号表到Bugly</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单例子"><span class="nav-number">6.</span> <span class="nav-text">简单例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对比实验"><span class="nav-number">7.</span> <span class="nav-text">对比实验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#三种方式的对比"><span class="nav-number">7.1.</span> <span class="nav-text">三种方式的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xcodebuild-xcrun和仅xcodebuild的比较"><span class="nav-number">7.2.</span> <span class="nav-text">xcodebuild+xcrun和仅xcodebuild的比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令到底做了什么"><span class="nav-number">7.3.</span> <span class="nav-text">命令到底做了什么</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz',
+    appKey: 'PeIEayFBbCg6sRnLi6yeImgD',
+    placeholder: 'Just say hi .',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn'
+  });
+</script>
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz',
+                'X-LC-Key': 'PeIEayFBbCg6sRnLi6yeImgD',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

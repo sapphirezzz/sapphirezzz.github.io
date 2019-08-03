@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":true,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...">
+<meta name="keywords" content="iOS Android 图片压缩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...">
+<meta property="og:url" content="https://zackzheng.info/2016/02/26/app-image-compress-upload-to-server/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-29T09:17:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...">
+<meta name="twitter:description" content="App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://zackzheng.info/2016/02/26/app-image-compress-upload-to-server/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>App图片压缩裁剪原理和上传方案，以及那些有趣的事儿... | Just My Blog</title>
+  
+
+
+
+
+  <script async src="//www.googletagmanager.com/gtag/js?id=UA-86660611-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-86660611-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fd61ba8d7ebf70f7c206f1a51025535b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/sapphirezzz" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2016/02/26/app-image-compress-upload-to-server/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content="Zack Zheng's Blog">
+      <meta itemprop="image" content="/uploads/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-02-26 16:00:00" itemprop="dateCreated datePublished" datetime="2016-02-26T16:00:00+08:00">2016-02-26</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-04-29 17:17:09" itemprop="dateModified" datetime="2019-04-29T17:17:09+08:00">2019-04-29</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Tech/" itemprop="url" rel="index"><span itemprop="name">Tech</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">Comments: </span>
+                <a href="/2016/02/26/app-image-compress-upload-to-server/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2016/02/26/app-image-compress-upload-to-server/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+            <span id="/2016/02/26/app-image-compress-upload-to-server/" class="leancloud_visitors" data-flag-title="App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+            <div class="post-description">App图片压缩裁剪原理和上传方案，以及那些有趣的事儿...</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
+<li>App怎么压缩质量？<ul>
+<li>iOS和Android压缩接口</li>
+<li>实验一</li>
+</ul>
+</li>
+<li>如何计算图片的大小？</li>
+<li>JPEG&amp;JFIF压缩做了什么？<ul>
+<li>色彩空间转换</li>
+<li>缩减取样</li>
+<li>离散余弦变换</li>
+<li>量化</li>
+<li>编码</li>
+</ul>
+</li>
+<li>App怎么裁剪分辨率？</li>
+<li>图片压缩裁剪上传方案<ul>
+<li>实验一：上传速度</li>
+<li>实验二：用户设备主要分辨率</li>
+<li>实验三：上传的照片的主要分辨率</li>
+<li>实验四：压缩质量的大致规律</li>
+<li>实验五：等比例裁剪后压缩质量的大致规律</li>
+<li>实验六：WebP压缩</li>
+<li>制定方案</li>
+</ul>
+</li>
+<li>总结</li>
+<li>附录<ul>
+<li>图像的一些概念澄清</li>
+<li>压缩算法概念</li>
+<li>微信图片处理规律</li>
+<li>Base64编码后大小</li>
+<li>iOS的pt与Android的sp</li>
+<li>Android图片质量会比iPhone的差？</li>
+<li>iOS的UIImage保存图片问题</li>
+<li>压缩再压缩做了什么</li>
+</ul>
+</li>
+</ul>
+<p>最近有反馈说App上传图片偶尔会失败，特别是在网速慢和iPhone 6s的机器上。有些提示是“413 Request Entity Too Large”，Request大小1.15MB。之前只是简单地压到0.7，没有做裁剪等其他处理。</p>
+<p>所以这几天整体研究下iOS和Android的图片压缩裁剪和JPEG压缩原理，也稍微找了微信发图片的规律，越深入发现越多有趣的东西，问题一环扣一环。</p>
+<h1 id="App怎么压缩质量？"><a href="#App怎么压缩质量？" class="headerlink" title="App怎么压缩质量？"></a>App怎么压缩质量？</h1><p>最先接触的是压缩质量，所以看下压缩质量做了什么。</p>
+<h2 id="iOS和Android压缩接口"><a href="#iOS和Android压缩接口" class="headerlink" title="iOS和Android压缩接口"></a>iOS和Android压缩接口</h2><p>iOS:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UIImageJPEGRepresentation(UIImage * __nonnull image, CGFloat compressionQuality);  </span><br><span class="line">// return image as JPEG. May return nil if image has no CGImageRef or invalid bitmap format. compression is 0(most)..1(least)</span><br></pre></td></tr></table></figure>
+<p>Android:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/** </span><br><span class="line">    * Write a compressed version of the bitmap to the specified outputstream. </span><br><span class="line">    * If this returns true, the bitmap can be reconstructed by passing a </span><br><span class="line">    * corresponding inputstream to BitmapFactory.decodeStream(). Note: not </span><br><span class="line">    * all Formats support all bitmap configs directly, so it is possible that </span><br><span class="line">    * the returned bitmap from BitmapFactory could be in a different bitdepth, </span><br><span class="line">    * and/or may have lost per-pixel alpha (e.g. JPEG only supports opaque </span><br><span class="line">    * pixels). </span><br><span class="line">    * </span><br><span class="line">    * @param format   The format of the compressed image </span><br><span class="line">    * @param quality  Hint to the compressor, 0-100. 0 meaning compress for </span><br><span class="line">    *                 small size, 100 meaning compress for max quality. Some </span><br><span class="line">    *                 formats, like PNG which is lossless, will ignore the </span><br><span class="line">    *                 quality setting </span><br><span class="line">    * @param stream   The outputstream to write the compressed data. </span><br><span class="line">    * @return true if successfully compressed to the specified stream. </span><br><span class="line">*/</span><br><span class="line">compress(CompressFormat format, int quality, OutputStream stream)</span><br></pre></td></tr></table></figure>
+<p>从官方注释看，iOS的compressionQuality取值从0-1，且“1”注明是least，也就是说<strong>“1”不是不压缩，而是压缩强度最弱</strong>；Android的quality取值0-100，也是<strong>100代表最大质量，不是不压缩</strong>。最后面测试也验证了这个问题，而<em>不是网上很多文档说的不压缩</em>。我们先统称compressionQuality和quality为质量系数，下文也是。</p>
+<h2 id="实验一"><a href="#实验一" class="headerlink" title="实验一"></a>实验一</h2><p>于是拍了一张照片A，然后Android和iOS都压缩得到照片B。</p>
+<p>对比了A、B两张图，想看看到底影响了什么：</p>
+<blockquote>
+<p>宽度：2448像素<br>高度：3264像素<br>分辨率：72像素/英寸<br>文档：22.9MB<br>通道：3（RGB）</p>
+</blockquote>
+<p>注：<em>需弄明白附录的关于图像的一些概念澄清</em>。</p>
+<p>两张照片看到的参数都一样，那为什么它们的文件大小会不一样呢？（<em>过程中发现iOS的UIImage会做多一些工作，使得实验结果有误，原因后面会提到。</em>）（用Picasa看图软件可以查看质量，数值上看到等于我们的质量系数）所以就想到第二个问题，文件大小怎么计算的？由什么决定？</p>
+<h1 id="如何计算图片的大小？"><a href="#如何计算图片的大小？" class="headerlink" title="如何计算图片的大小？"></a>如何计算图片的大小？</h1><p>总分辨率 * 像素表示的位数。</p>
+<p>像素表示的位数：这就涉及到色彩模式，比较常见有RGB、CMYK、YUV等。RGB一般用RGB24（还有RGB555、RGB565、RGB32），即红绿蓝都分别用8位表示，所以用了24位表示一个像素，可以组合出2^24种颜色。</p>
+<p>上面两张图水平有2448个像素，垂直有3264个像素，每个像素用24b表示，按这公式大小应该都是：2448x3264x24b＝23970816B=22.86MB。为什么呢？</p>
+<p>后来明白，原来这公式是算位图的占用空间大小，而JPEG&amp;JFIF是将位图压缩，不仅压缩图像质量还压缩图像占用空间（后面会讲到）。也就是说<strong>图像压缩不等于压缩质量和分辨率，还有压缩占用空间</strong>。</p>
+<p>网上查到JFIF文件没有计算大小的公式，因为压缩质量和压缩后大小没有特定关系，如线性关系。<strong>那么JPEG&amp;JFIF压缩做了什么？这个质量到底代表了什么？</strong></p>
+<h1 id="JPEG-amp-JFIF压缩做了什么？"><a href="#JPEG-amp-JFIF压缩做了什么？" class="headerlink" title="JPEG&amp;JFIF压缩做了什么？"></a>JPEG&amp;JFIF压缩做了什么？</h1><p>其实JPEG&amp;JFIF做了两件事情：</p>
+<ol>
+<li>去掉视觉上的冗余信息</li>
+<li>去掉数据本身结构的冗余</li>
+</ol>
+<p>第一步实现通过色彩空间转换、缩减取样、离散余弦变换、量化，第二步实现通过编码。</p>
+<p>其实这部分可以选择跳过，只是我为了理解压缩质量是怎么体现的而去看的，后面也发现理解后很多问题都很清晰明白。</p>
+<h2 id="色彩空间转换"><a href="#色彩空间转换" class="headerlink" title="色彩空间转换"></a>色彩空间转换</h2><p>JPEG需要YUV色彩模式，所以需要将RGB转成YUV：</p>
+<ul>
+<li>Y=0.299R’+0.587G’+0.114B’</li>
+<li>U=-0.147R’-0.289G’+0.436B’</li>
+<li>V=0.615R’-0.515G’-0.100B’</li>
+</ul>
+<h2 id="缩减取样"><a href="#缩减取样" class="headerlink" title="缩减取样"></a>缩减取样</h2><p>YUV分别代表亮度、色度、饱和度，因为人类的眼睛对于亮度差异的敏感度高于色彩变化，所以一般会对U、V进行缩减采样。在JPEG上这种缩减取样的比例可以是4:4:4（无缩减取样）、4:2:2、4:2:0。所以经常会看到YUV444，YUV422和YUV420等。</p>
+<h2 id="离散余弦变换"><a href="#离散余弦变换" class="headerlink" title="离散余弦变换"></a>离散余弦变换</h2><p>将每个8x8的子区域转换到频率空间，这部分是无损的。</p>
+<p>-415 -30 -61  27  56 -20 -2  0<br>   4    -22 -61  10  13  -7  -9  5<br>  -47   7   77  -25 -29 10  5  -6<br>  -49  12  34  -15 -10  6   2   2<br>  12   -7  -13   -4   -2   2   -3  3<br>   -8    3    2     -6   -2   1   4   2<br>  -1     0    0    -2    -1   -3  4  -1<br>   0     0    -1   -4    -1    0   1  2</p>
+<h2 id="量化"><a href="#量化" class="headerlink" title="量化"></a>量化</h2><p>量化是有损的过程，也是失真的主要原因。上面矩阵中每个值都是幅度，量化是利用人眼特点在高频率上降低信息的数量（简单地把频率领域上每个成分，除以一个对于该成分的常数就可完成，且接着舍位取最接近的整数），与一个基本矩阵运算然后得到一个新的矩阵，<strong>该新矩阵数据基本集中在左上角</strong>。</p>
+<p>其实<strong>量化做的就是减少非0系数幅度和增加0值系数的个数</strong>。<br><strong>我们接口中的质量系数就是和这里的基本矩阵有关。</strong></p>
+<h2 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h2><p>Z扫描0值行程长度编码、哈夫曼编码。<br>Z扫描0值行程长度编码利用了量化后矩阵的特点，使得0值的都能串在最后面，对于过早结束的最后用EOB表示。<br>这一步就是<strong>压缩文件的占用空间</strong>。</p>
+<h1 id="App怎么裁剪分辨率？"><a href="#App怎么裁剪分辨率？" class="headerlink" title="App怎么裁剪分辨率？"></a>App怎么裁剪分辨率？</h1><p>弄清楚压缩质量问题后，我们知道，影响位图的大小有分辨率，那么减少分辨率也就能使压缩得更小了。注意这里裁剪分辨率不等于裁剪图片，不会丢失图片的某一部分。</p>
+<p>iOS:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">UIGraphicsBeginImageContext(newSize);</span><br><span class="line">[imageFixed drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];</span><br><span class="line">UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();</span><br><span class="line">UIGraphicsEndImageContext();</span><br></pre></td></tr></table></figure>
+<p>Android:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Bitmap image = BitmapFactory.decodeStream(file);</span><br><span class="line">int bitmapWidth = image.getWidth();</span><br><span class="line">int bitmapHeight = image.getHeight();</span><br><span class="line">Matrix matrix = new Matrix();</span><br><span class="line">matrix.postScale(scaleRatio, scaleRatio);</span><br><span class="line">Bitmap scaledBitmap = Bitmap.createBitmap(image, 0, 0, bitmapWidth, bitmapHeight, matrix, false);</span><br></pre></td></tr></table></figure>
+<p>我们是等比例裁剪，比例和裁剪后占用空间大小并不一定成线性关系，这个裁剪具体怎么实现的和每个像素的质量有关系。</p>
+<h1 id="图片压缩裁剪上传方案"><a href="#图片压缩裁剪上传方案" class="headerlink" title="图片压缩裁剪上传方案"></a>图片压缩裁剪上传方案</h1><p>明白一个图片的清晰度等受什么影响之后，可以来定下方案了，但是还得做些测试获取数据，依据数据结果来定方案。</p>
+<h2 id="实验一：上传速度"><a href="#实验一：上传速度" class="headerlink" title="实验一：上传速度"></a>实验一：上传速度</h2><p>我们用Charles模拟了各种网络环境下上传相同照片的网速：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">环境</th>
+<th style="text-align:center">wifi</th>
+<th style="text-align:center">8M</th>
+<th style="text-align:center">16M</th>
+<th>32M</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">速度KB/s</td>
+<td style="text-align:center">754.78</td>
+<td style="text-align:center">115.4</td>
+<td style="text-align:center">115.78</td>
+<td>116.25</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">环境</th>
+<th style="text-align:center">32M光纤</th>
+<th style="text-align:center">100M光纤</th>
+<th style="text-align:center">3G</th>
+<th>4G</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">速度KB/s</td>
+<td style="text-align:center">174.65</td>
+<td style="text-align:center">167.33</td>
+<td style="text-align:center">114.18</td>
+<td>174.73</td>
+</tr>
+</tbody>
+</table>
+<p>这些不等价于我们用户的网速平均值，而且只取一次样本，所以只是作为参考。</p>
+<h2 id="实验二：用户设备主要分辨率"><a href="#实验二：用户设备主要分辨率" class="headerlink" title="实验二：用户设备主要分辨率"></a>实验二：用户设备主要分辨率</h2><p>因为照片都是在用户设备上看的，所以了解下用户的主流分辨率，将分辨率裁剪到趋近或稍大于该主流分辨率会比较适合。iOS和Android都取接近的值。</p>
+<p>在友盟查看了我们的应用的相关数据：</p>
+<ul>
+<li>Android，较大占比的是宽度1080像素和720像素的设备。宽度1080像素的，新增用户占比49.69%，启动次数占比44.29%；宽度720像素的，新增用户占比32.47%，启动次数占比37.76%。</li>
+<li>iOS，较大占比的是宽度1242像素、750像素和640像素的设备。宽度1242像素的，新增用户占比31.84%，启动次数占比26.91%；宽度750像素的，新增用户占比36.20%，启动次数占比31.59%；宽度640像素的，新增用户占比20.36%，启动次数占比20.84%。</li>
+</ul>
+<h2 id="实验三：上传的照片的主要分辨率"><a href="#实验三：上传的照片的主要分辨率" class="headerlink" title="实验三：上传的照片的主要分辨率"></a>实验三：上传的照片的主要分辨率</h2><p>找下上传的照片的主要分辨率，可以针对这些分辨率去确定和衡量方案。<br>也是在友盟上看我们的应用的数据：</p>
+<ul>
+<li>iOS主流机型是iPhone6、iPhone6s、iPhone6 Plus、iPhone6s Plus，占到70%左右。它们的拍照分辨率分别是2448x3264，3024x4032。</li>
+<li>Android相对较碎片化，只能是针对最大的分辨率去衡量。</li>
+</ul>
+<h2 id="实验四：压缩质量的大致规律"><a href="#实验四：压缩质量的大致规律" class="headerlink" title="实验四：压缩质量的大致规律"></a>实验四：压缩质量的大致规律</h2><p>2448x3264照片压缩后的数据大小（单位B）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">压缩强度</th>
+<th style="text-align:center">图片1</th>
+<th style="text-align:center">图片2</th>
+<th style="text-align:center">图片3</th>
+<th style="text-align:center">图片4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0.1</td>
+<td style="text-align:center">197777</td>
+<td style="text-align:center">174464</td>
+<td style="text-align:center">152897</td>
+<td style="text-align:center">195214</td>
+</tr>
+<tr>
+<td style="text-align:center">0.2</td>
+<td style="text-align:center">212779</td>
+<td style="text-align:center">183532</td>
+<td style="text-align:center">163225</td>
+<td style="text-align:center">209426</td>
+</tr>
+<tr>
+<td style="text-align:center">0.3</td>
+<td style="text-align:center">253658</td>
+<td style="text-align:center">205512</td>
+<td style="text-align:center">196188</td>
+<td style="text-align:center">248320</td>
+</tr>
+<tr>
+<td style="text-align:center">0.4</td>
+<td style="text-align:center">360091</td>
+<td style="text-align:center">256013</td>
+<td style="text-align:center">283607</td>
+<td style="text-align:center">349968</td>
+</tr>
+<tr>
+<td style="text-align:center">0.5</td>
+<td style="text-align:center">498199</td>
+<td style="text-align:center">336823</td>
+<td style="text-align:center">390525</td>
+<td style="text-align:center">485286</td>
+</tr>
+<tr>
+<td style="text-align:center">0.6</td>
+<td style="text-align:center">724491</td>
+<td style="text-align:center">488737</td>
+<td style="text-align:center">548437</td>
+<td style="text-align:center">698421</td>
+</tr>
+<tr>
+<td style="text-align:center">0.7</td>
+<td style="text-align:center">1209508</td>
+<td style="text-align:center">883664</td>
+<td style="text-align:center">936968</td>
+<td style="text-align:center">1161342</td>
+</tr>
+<tr>
+<td style="text-align:center">0.8</td>
+<td style="text-align:center">1475669</td>
+<td style="text-align:center">1063724</td>
+<td style="text-align:center">1130241</td>
+<td style="text-align:center">1415084</td>
+</tr>
+<tr>
+<td style="text-align:center">0.9</td>
+<td style="text-align:center">1700461</td>
+<td style="text-align:center">1247600</td>
+<td style="text-align:center">1334143</td>
+<td style="text-align:center">1636293</td>
+</tr>
+<tr>
+<td style="text-align:center">1.0</td>
+<td style="text-align:center">4568157</td>
+<td style="text-align:center">3629379</td>
+<td style="text-align:center">4139209</td>
+<td style="text-align:center">4433556</td>
+</tr>
+<tr>
+<td style="text-align:center">原图占用</td>
+<td style="text-align:center">1714688</td>
+<td style="text-align:center">1257647</td>
+<td style="text-align:center">1353635</td>
+<td style="text-align:center">1647936</td>
+</tr>
+</tbody>
+</table>
+<p>3024x4032照片压缩后的数据大小（单位B）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">压缩强度</th>
+<th style="text-align:center">图片5</th>
+<th style="text-align:center">图片6</th>
+<th style="text-align:center">图片7</th>
+<th style="text-align:center">图片8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0.1</td>
+<td style="text-align:center">551527</td>
+<td style="text-align:center">325434</td>
+<td style="text-align:center">296792</td>
+<td style="text-align:center">492494</td>
+</tr>
+<tr>
+<td style="text-align:center">0.2</td>
+<td style="text-align:center">619307</td>
+<td style="text-align:center">352608</td>
+<td style="text-align:center">328183</td>
+<td style="text-align:center">547533</td>
+</tr>
+<tr>
+<td style="text-align:center">0.3</td>
+<td style="text-align:center">785915</td>
+<td style="text-align:center">422342</td>
+<td style="text-align:center">416459</td>
+<td style="text-align:center">683265</td>
+</tr>
+<tr>
+<td style="text-align:center">0.4</td>
+<td style="text-align:center">1061504</td>
+<td style="text-align:center">537826</td>
+<td style="text-align:center">589206</td>
+<td style="text-align:center">931686</td>
+</tr>
+<tr>
+<td style="text-align:center">0.5</td>
+<td style="text-align:center">1408297</td>
+<td style="text-align:center">891288</td>
+<td style="text-align:center">839938</td>
+<td style="text-align:center">1290788</td>
+</tr>
+<tr>
+<td style="text-align:center">0.6</td>
+<td style="text-align:center">2071014</td>
+<td style="text-align:center">973894</td>
+<td style="text-align:center">1108102</td>
+<td style="text-align:center">1607344</td>
+</tr>
+<tr>
+<td style="text-align:center">0.7</td>
+<td style="text-align:center">2547536</td>
+<td style="text-align:center">1228021</td>
+<td style="text-align:center">1756824</td>
+<td style="text-align:center">2479774</td>
+</tr>
+<tr>
+<td style="text-align:center">0.8</td>
+<td style="text-align:center">2652258</td>
+<td style="text-align:center">1320258</td>
+<td style="text-align:center">1831889</td>
+<td style="text-align:center">2617015</td>
+</tr>
+<tr>
+<td style="text-align:center">0.9</td>
+<td style="text-align:center">3336839</td>
+<td style="text-align:center">1603754</td>
+<td style="text-align:center">2212214</td>
+<td style="text-align:center">3079872</td>
+</tr>
+<tr>
+<td style="text-align:center">1.0</td>
+<td style="text-align:center">7282230</td>
+<td style="text-align:center">4337074</td>
+<td style="text-align:center">5787540</td>
+<td style="text-align:center">7962849</td>
+</tr>
+<tr>
+<td style="text-align:center">原图占用</td>
+<td style="text-align:center">2635183</td>
+<td style="text-align:center">1511290</td>
+<td style="text-align:center">1860418</td>
+<td style="text-align:center">2641699</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>会出现压缩出来反而比原图大的问题，后面会讨论</li>
+<li>在没有裁剪的情况下，压到0.6依旧不是太理想，特别是分辨率更高的照片。</li>
+<li>在excel表格中将数据组成折线图，可以看出在0.9、0.8的时候下降幅度较大，后面相对平缓一点。</li>
+</ul>
+<h2 id="实验五：等比例裁剪后压缩质量的大致规律"><a href="#实验五：等比例裁剪后压缩质量的大致规律" class="headerlink" title="实验五：等比例裁剪后压缩质量的大致规律"></a>实验五：等比例裁剪后压缩质量的大致规律</h2><p>2448x3264照片等比例压缩到宽度1224像素时的数据大小（单位B）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">压缩强度</th>
+<th style="text-align:center">图片1</th>
+<th style="text-align:center">图片2</th>
+<th style="text-align:center">图片3</th>
+<th style="text-align:center">图片4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0.1</td>
+<td style="text-align:center">58975</td>
+<td style="text-align:center">52025</td>
+<td style="text-align:center">43301</td>
+<td style="text-align:center">60029</td>
+</tr>
+<tr>
+<td style="text-align:center">0.2</td>
+<td style="text-align:center">64446</td>
+<td style="text-align:center">55583</td>
+<td style="text-align:center">46529</td>
+<td style="text-align:center">65347</td>
+</tr>
+<tr>
+<td style="text-align:center">0.3</td>
+<td style="text-align:center">76982</td>
+<td style="text-align:center">63805</td>
+<td style="text-align:center">55494</td>
+<td style="text-align:center">77891</td>
+</tr>
+<tr>
+<td style="text-align:center">0.4</td>
+<td style="text-align:center">99499</td>
+<td style="text-align:center">77605</td>
+<td style="text-align:center">76695</td>
+<td style="text-align:center">100042</td>
+</tr>
+<tr>
+<td style="text-align:center">0.5</td>
+<td style="text-align:center">129826</td>
+<td style="text-align:center">95116</td>
+<td style="text-align:center">103949</td>
+<td style="text-align:center">129597</td>
+</tr>
+<tr>
+<td style="text-align:center">0.6</td>
+<td style="text-align:center">173036</td>
+<td style="text-align:center">120654</td>
+<td style="text-align:center">144188</td>
+<td style="text-align:center">173569</td>
+</tr>
+<tr>
+<td style="text-align:center">0.7</td>
+<td style="text-align:center">246847</td>
+<td style="text-align:center">174977</td>
+<td style="text-align:center">209876</td>
+<td style="text-align:center">249223</td>
+</tr>
+<tr>
+<td style="text-align:center">0.8</td>
+<td style="text-align:center">303546</td>
+<td style="text-align:center">208392</td>
+<td style="text-align:center">261322</td>
+<td style="text-align:center">308841</td>
+</tr>
+<tr>
+<td style="text-align:center">0.9</td>
+<td style="text-align:center">411181</td>
+<td style="text-align:center">294795</td>
+<td style="text-align:center">358003</td>
+<td style="text-align:center">420013</td>
+</tr>
+<tr>
+<td style="text-align:center">1.0</td>
+<td style="text-align:center">1574657</td>
+<td style="text-align:center">1280563</td>
+<td style="text-align:center">1536779</td>
+<td style="text-align:center">1566585</td>
+</tr>
+<tr>
+<td style="text-align:center">原图占用</td>
+<td style="text-align:center">1714688</td>
+<td style="text-align:center">1257647</td>
+<td style="text-align:center">1353635</td>
+<td style="text-align:center">1647936</td>
+</tr>
+</tbody>
+</table>
+<p>3024x4032照片等比例压缩到宽度1224像素时的数据大小（单位B）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">压缩强度</th>
+<th style="text-align:center">图片5</th>
+<th style="text-align:center">图片6</th>
+<th style="text-align:center">图片7</th>
+<th style="text-align:center">图片8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0.1</td>
+<td style="text-align:center">111697</td>
+<td style="text-align:center">70802</td>
+<td style="text-align:center">54321</td>
+<td style="text-align:center">121994</td>
+</tr>
+<tr>
+<td style="text-align:center">0.2</td>
+<td style="text-align:center">127179</td>
+<td style="text-align:center">77524</td>
+<td style="text-align:center">61810</td>
+<td style="text-align:center">136869</td>
+</tr>
+<tr>
+<td style="text-align:center">0.3</td>
+<td style="text-align:center">163959</td>
+<td style="text-align:center">94048</td>
+<td style="text-align:center">79713</td>
+<td style="text-align:center">172194</td>
+</tr>
+<tr>
+<td style="text-align:center">0.4</td>
+<td style="text-align:center">225870</td>
+<td style="text-align:center">122258</td>
+<td style="text-align:center">113295</td>
+<td style="text-align:center">230197</td>
+</tr>
+<tr>
+<td style="text-align:center">0.5</td>
+<td style="text-align:center">302097</td>
+<td style="text-align:center">157160</td>
+<td style="text-align:center">155152</td>
+<td style="text-align:center">300772</td>
+</tr>
+<tr>
+<td style="text-align:center">0.6</td>
+<td style="text-align:center">395440</td>
+<td style="text-align:center">202312</td>
+<td style="text-align:center">210836</td>
+<td style="text-align:center">385183</td>
+</tr>
+<tr>
+<td style="text-align:center">0.7</td>
+<td style="text-align:center">524345</td>
+<td style="text-align:center">273895</td>
+<td style="text-align:center">295530</td>
+<td style="text-align:center">505417</td>
+</tr>
+<tr>
+<td style="text-align:center">0.8</td>
+<td style="text-align:center">623839</td>
+<td style="text-align:center">323884</td>
+<td style="text-align:center">363596</td>
+<td style="text-align:center">593923</td>
+</tr>
+<tr>
+<td style="text-align:center">0.9</td>
+<td style="text-align:center">777293</td>
+<td style="text-align:center">420943</td>
+<td style="text-align:center">481205</td>
+<td style="text-align:center">745946</td>
+</tr>
+<tr>
+<td style="text-align:center">1.0</td>
+<td style="text-align:center">2184791</td>
+<td style="text-align:center">1530139</td>
+<td style="text-align:center">1774130</td>
+<td style="text-align:center">2291622</td>
+</tr>
+<tr>
+<td style="text-align:center">原图占用</td>
+<td style="text-align:center">2635183</td>
+<td style="text-align:center">1511290</td>
+<td style="text-align:center">1860418</td>
+<td style="text-align:center">2641699</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>可以看到裁剪这个分辨率后压缩质量0.6的大小相对可接受，而且图片质量影响也较小。</li>
+<li>在这个分辨率下，压缩质量0.8时基本压缩到1/4至1/5。</li>
+</ul>
+<h2 id="实验六：WebP压缩"><a href="#实验六：WebP压缩" class="headerlink" title="实验六：WebP压缩"></a>实验六：WebP压缩</h2><p>WebP据称在同等质量下大小可以压缩至JPEG的2/3。在iOS和Android都做了WebP的压缩测试，发现压缩速度非常慢，需要20s-35s，这是很不可接受的。上网查到WebP的压缩效率的确较慢，是JPEG的8倍左右，而且相比JPEG需要耗费更多的系统性能。所以本来想用WebP做兜底的方案暂时落空。</p>
+<h2 id="制定方案"><a href="#制定方案" class="headerlink" title="制定方案"></a>制定方案</h2><p>方案的目的是：</p>
+<ol>
+<li>上传图片不超时</li>
+<li>处理后质量清晰度可接受</li>
+<li>缩短上传耗时</li>
+</ol>
+<p>结合实验结论：</p>
+<ul>
+<li>根据实验一，平均上传速度100KB/s，另外我们测试很差情况下有15KB/s的情况。我们的接口超时30s，所以可接受的图片大小最大为450KB。</li>
+<li>根据实验二，等比例宽度取750-1242像素比较合适。</li>
+<li>根据实验三、四、五，等比例裁剪到宽度1224像素后压缩至0.6、0.7大小相对可接受。质量相对可接受（主观感受）。</li>
+<li><a href="http://www.mahaixiang.cn/Photoshop/400.html" target="_blank" rel="noopener">JPG、PNG和GIF图片的基本原理及优化方法</a>讲到，通常建议JPG质量最好是在60左右的原因。当在Photoshop中把质量设置低于51的时候，它就会执行另一个叫做“降色采样”的优化算法，它会在8个像素周围平均采样，这样会在边缘产生杂色。</li>
+</ul>
+<p>定下方案：</p>
+<ol>
+<li>照片宽度大于1224像素（因为iPhone6照片宽度2448所以想取个可以整除的）时等比例裁剪宽度成1224。因为分辨率太大甚至两倍于手机分辨率实际没有任何用处。</li>
+<li>压缩质量系数至0.8(80)看下大小是否小于300KB，排除一些小分辨率的照片。小于则上传，大于则继续压缩，取0.7(70)，排除一些中等的，如果还大于则取0.6(60)后不判断直接上传。根据上面的实验可以看到在宽度1224像素下基本都会小于300KB，大于的则处于450KB内，且450KB是网速最差的情况，因此基本可以保证上传。</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>方案目前看压缩的质量和时间控制都相对较好，但是还要继续观察一段时间看需不需要再调整参数。在这过程中理清了很多概念，了解了图片压缩过程中发生了什么事情，挺有趣的，根本停不下来。</p>
+<h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><p>文中涉及到的一些概念以及发现的一些其他相关事情。</p>
+<h2 id="图像的一些概念澄清"><a href="#图像的一些概念澄清" class="headerlink" title="图像的一些概念澄清"></a>图像的一些概念澄清</h2><p>其实图像真正的信息是它的<strong>总分辨率</strong>（图像宽度x图像高度）和<strong>分辨率</strong>（水平分辨率&amp;垂直分辨率），<strong>而涉及到英寸、厘米等长度单位时的大小，其实不是图像的信息，只是在涉及到外部，比如打印、设备屏幕显示等等时，换算出来的。</strong></p>
+<ul>
+<li>水平分辨率&amp;垂直分辨率</li>
+</ul>
+<p>分辨率一般单位ppi（也有dpi），即每英寸上多少个像素。水平分辨率即水平方向上像素个数/水平长度，垂直分辨率同理。<strong>一般水平分辨率和垂直分辨率是相等的，所以日常也简称为分辨率。</strong>dpi即每英寸上多少点。这两个单位根据不同显示设备有换算关系。</p>
+<ul>
+<li>图像宽度&amp;图像高度</li>
+</ul>
+<p>其实标准些，讲宽度&amp;高度时一般是讲图像水平/垂直上有多少个像素。如一张2448x3264的照片，则宽度是2448像素，高度是3264像素。也有讲宽度是86.36厘米，高度是115.15厘米，一般在打印照片等情况下。</p>
+<ul>
+<li>分辨率</li>
+</ul>
+<p>日常讲分辨率时其实可以指很多情况，一般指图像宽度x高度，如2448x3264，指水平上有2448个像素，垂直上有3264个像素。</p>
+<h2 id="压缩算法概念"><a href="#压缩算法概念" class="headerlink" title="压缩算法概念"></a>压缩算法概念</h2><ul>
+<li>JPEG</li>
+</ul>
+<p>一个名称为Joint Photographic Experts Group的组织，也是一种压缩算法。JPEG本身只有描述如何将一个视频转换为字节的数据流（streaming），但<strong>并没有说明这些字节如何在任何特定的存储媒体上被封存起来</strong>。JPEG有有损压缩和无损压缩，无损压缩的没有得到什么支持，所以一般讲JPEG指它的有损压缩。</p>
+<ul>
+<li>JFIF</li>
+</ul>
+<p>JPEG File Interchange Format，JPEG文件交换格式，<strong>详细说明如何从一个JPEG流，产出一个适合于电脑存储和传输的文件</strong>。一般后缀有.jpeg、.jpg、.jfif以及.jif。</p>
+<ul>
+<li>Bitmap</li>
+</ul>
+<p>又称栅格图，是使用像素阵列来表示的图像。非压缩格式，从左往右从上往下扫描，占用较大存储空间。</p>
+<blockquote>
+<p><a href="https://zh.wikipedia.org/wiki/JPEG" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/JPEG</a><br><a href="https://zh.wikipedia.org/wiki/%E4%BD%8D%E5%9B%BE" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/%E4%BD%8D%E5%9B%BE</a></p>
+</blockquote>
+<h2 id="微信图片处理规律"><a href="#微信图片处理规律" class="headerlink" title="微信图片处理规律"></a>微信图片处理规律</h2><p>经过简单测试发现，在微信，A发一张原图给B时，B直接保存缩略图：</p>
+<ul>
+<li>iOS版的微信保存下来是等比例压缩高度为800，质量80。</li>
+<li>Android版的微信保存下来是等比例压缩高度为1280，质量80。</li>
+</ul>
+<p>朋友圈的图片保存下来，都是等比例到高1280像素，质量和大小还没找到规律。<br>为什么微信是取高固定而不是宽呢？可以思考下。</p>
+<h2 id="Base64编码后大小"><a href="#Base64编码后大小" class="headerlink" title="Base64编码后大小"></a>Base64编码后大小</h2><p>我们现在还用着Base64编码图像数据，后面需改成提交表单方式。</p>
+<p>Base64要求把每三个8Bit的字节转换为四个6Bit的字节（3<em>8 = 4</em>6 = 24），然后把6Bit再添两位高位0，组成四个8Bit的字节，也就是说，<strong>转换后的字符串理论上将要比原来的长1/3</strong>。</p>
+<h2 id="iOS的pt与Android的sp"><a href="#iOS的pt与Android的sp" class="headerlink" title="iOS的pt与Android的sp"></a>iOS的pt与Android的sp</h2><p>我在<a href="https://sapphirezzz.github.io/blog/2016/01/17/ios-devices-info/" target="_blank" rel="noopener">iOS所有设备的分辨率、尺寸和缩放因子，放大模式区别和6P实际分辨率</a>文章里讲了iOS设备的pt和px关系。<br>iOS的pt是开发单位，一个逻辑point对应一个点dot。@1x设备上一个pt上显示1个px（像素），@2x上一个pt显示2个px，@3x上显示3个px。平时在storyboard上设置时指的都是pt。</p>
+<p>Android的sp一种基于屏幕密度的抽象单位。</p>
+<h2 id="Android图片质量会比iPhone的差？"><a href="#Android图片质量会比iPhone的差？" class="headerlink" title="Android图片质量会比iPhone的差？"></a>Android图片质量会比iPhone的差？</h2><p>在<a href="http://www.cnblogs.com/MaxIE/p/3951294.html" target="_blank" rel="noopener">为什么Android的图片质量会比iPhone的差？</a>、<a href="http://www.eoeandroid.com/thread-570303-1-3.html?_dsign=bc58b99e" target="_blank" rel="noopener">[Android算法] 【04/28 bug修改】android图片压缩终极解决方案</a>、<a href="http://www.cnblogs.com/hrlnw/p/4403334.html" target="_blank" rel="noopener">Android图片编码机制深度解析（Bitmap，Skia，libJpeg）</a>三篇文章中讲了Android系统在压缩上的一些不为人知的问题。</p>
+<p>大致是，Android编码保存图片就是通过Java层函数——Native层函数——Skia库函数——对应第三方库函数（例如libjpeg），这一层层调用做到的。 libjpeg在压缩图像时，有一个参数叫optimize_coding，如果设置optimize_coding为TRUE，将会使得压缩图像过程中基于图像数据计算哈弗曼表，由于这个计算会显著消耗空间和时间，默认值被设置为FALSE。对于当时的计算设备来说，空间和时间的消耗可能是显著的，但到今天，这似乎不应再是问题。但谷歌的Skia项目工程师们对optimize_coding在Skia中默认的等于了FALSE，这就意味着更差的图片质量和更大的图片文件。还有其他和iOS的比较可以看下。</p>
+<p>也讲到了Android可以替换libjpeg库达到设置为TRUE的目的。</p>
+<h2 id="iOS的UIImage保存图片问题"><a href="#iOS的UIImage保存图片问题" class="headerlink" title="iOS的UIImage保存图片问题"></a>iOS的UIImage保存图片问题</h2><p>起初发现压缩后保存图片，不同压缩质量系数，得出来的文件大小趋势和计算出的大小趋势不同，所以怀疑使用NSData初始化UIImage时多做了什么。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">NSData *imageData06 = UIImageJPEGRepresentation(scaledImage, 0.6);</span><br><span class="line">UIImage *image06 = [UIImage imageWithData:imageData06];</span><br><span class="line">UIImageWriteToSavedPhotosAlbum(image06, nil, nil, nil);</span><br></pre></td></tr></table></figure>
+<p>通过软件发现，不同压缩质量系数，得出来的NSData保存成UIImage图片，看到的质量都是92，按道理应该是对应的质量系数才对。于是想将NSData保存成文件到目录，读取出文件大小。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];</span><br><span class="line">NSString *filePath = [documents stringByAppendingPathComponent:@&quot;image.jpg&quot;];</span><br><span class="line">NSData *imageData = UIImageJPEGRepresentation(image, 0.7);</span><br><span class="line">NSError *error = nil;</span><br><span class="line">[imageData writeToFile:filePath options:NSDataWritingAtomic error:&amp;error];</span><br><span class="line">if (error != nil) &#123;</span><br><span class="line">	NSLog(@&quot;error = %@&quot;, error);</span><br><span class="line">&#125;else &#123;</span><br><span class="line">	NSLog(@&quot;success&quot;);</span><br><span class="line">&#125;</span><br><span class="line">NSLog(@&quot;imageData = %u&quot;, (unsigned)imageData.length);</span><br><span class="line">NSFileManager* manager = [NSFileManager defaultManager];</span><br><span class="line">if ([manager fileExistsAtPath:filePath])&#123;</span><br><span class="line">	unsigned long long size = [[manager attributesOfItemAtPath:filePath error:nil] fileSize];</span><br><span class="line">	NSLog(@&quot;0.7后文件大小 %llu&quot;, size);</span><br><span class="line">&#125;</span><br><span class="line">UIImage *imageFromData = [UIImage imageWithData:imageData];</span><br><span class="line">UIImageWriteToSavedPhotosAlbum(imageFromData, nil, nil, nil);</span><br><span class="line">UIImage *imageRead = [[UIImage alloc] initWithContentsOfFile:filePath];</span><br><span class="line">UIImageWriteToSavedPhotosAlbum(imageRead, nil, nil, nil);</span><br></pre></td></tr></table></figure>
+<p>读取文件大小size和NSData大小imageData.length打印一致，而与imageRead、imageFromData的大小不一样，因此可以证明UIImage这个对象本身还做了其他事情。</p>
+<p>在<a href="http://www.udpwork.com/item/13533.html" target="_blank" rel="noopener">AFNetworking2.0源码解析</a>这篇文章的截图显示，UIImage的imageWithData方法堆栈显示还调用了哈夫曼解码。</p>
+<h2 id="压缩再压缩做了什么"><a href="#压缩再压缩做了什么" class="headerlink" title="压缩再压缩做了什么"></a>压缩再压缩做了什么</h2><ol>
+<li>首先谈下看图软件怎么展示图片。打开.jpg图片时，看图软件将文件转换成位图才显示出来，即把量化表矩阵与基本转化矩阵运算得出图片当前的位图（因为经过了压缩，所以该位图与原位图不同）。</li>
+<li>压缩后再压缩也是，先将图片变回位图，再将位图按现在的压缩质量系数压缩。</li>
+<li>所以压缩后的图片有可能变大，我猜测原因是，压缩前的占用空间压缩率较大，而再压缩时选的质量系数较大，导致压缩占用空间率（即压缩的第二步）较小，所以导致质量其实是变差了，但是占用空间反而可能变大。</li>
+</ol>
+<p>变大的例子如：本来图片A大小500KB，压缩质量系数选择0.7，得到B图片90KB，再拿这张B图片去压，压缩质量系数1.0，得出C图片。前面我们说压缩不仅压缩质量，还压缩占用空间。如果第一次压缩的压缩质量比例跟第二次压缩的比例的差值，比第一次压缩的压缩占用空间比例跟第二次的压缩占用空间比例的差值小，那么C图片就会比B图片大。因为虽然C图片质量比B图片质量差点，但是B图片的空间压缩得比C图片大比较多。</p>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://zackzheng.info">https://zackzheng.info</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/图片压缩/" rel="tag"># 图片压缩</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/26/universal-links/" rel="next" title="iOS下实现Universal Links及相关问题小总结">
+                <i class="fa fa-chevron-left"></i> iOS下实现Universal Links及相关问题小总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/06/migrate-to-hexo-from-octopress/" rel="prev" title="将博客从Octopress迁移往Hexo">
+                将博客从Octopress迁移往Hexo <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.gif" alt="Zack Zheng">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <div class="site-description motion-element" itemprop="description">Zack Zheng's Blog</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/sapphirezzz" title="GitHub &rarr; https://github.com/sapphirezzz" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhengzuanzhe@gmail.com" title="E-Mail &rarr; mailto:zhengzuanzhe@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#App怎么压缩质量？"><span class="nav-number">2.</span> <span class="nav-text">App怎么压缩质量？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS和Android压缩接口"><span class="nav-number">2.1.</span> <span class="nav-text">iOS和Android压缩接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验一"><span class="nav-number">2.2.</span> <span class="nav-text">实验一</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何计算图片的大小？"><span class="nav-number">3.</span> <span class="nav-text">如何计算图片的大小？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JPEG-amp-JFIF压缩做了什么？"><span class="nav-number">4.</span> <span class="nav-text">JPEG&amp;JFIF压缩做了什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#色彩空间转换"><span class="nav-number">4.1.</span> <span class="nav-text">色彩空间转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缩减取样"><span class="nav-number">4.2.</span> <span class="nav-text">缩减取样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#离散余弦变换"><span class="nav-number">4.3.</span> <span class="nav-text">离散余弦变换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#量化"><span class="nav-number">4.4.</span> <span class="nav-text">量化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码"><span class="nav-number">4.5.</span> <span class="nav-text">编码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#App怎么裁剪分辨率？"><span class="nav-number">5.</span> <span class="nav-text">App怎么裁剪分辨率？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图片压缩裁剪上传方案"><span class="nav-number">6.</span> <span class="nav-text">图片压缩裁剪上传方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实验一：上传速度"><span class="nav-number">6.1.</span> <span class="nav-text">实验一：上传速度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验二：用户设备主要分辨率"><span class="nav-number">6.2.</span> <span class="nav-text">实验二：用户设备主要分辨率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验三：上传的照片的主要分辨率"><span class="nav-number">6.3.</span> <span class="nav-text">实验三：上传的照片的主要分辨率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验四：压缩质量的大致规律"><span class="nav-number">6.4.</span> <span class="nav-text">实验四：压缩质量的大致规律</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验五：等比例裁剪后压缩质量的大致规律"><span class="nav-number">6.5.</span> <span class="nav-text">实验五：等比例裁剪后压缩质量的大致规律</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验六：WebP压缩"><span class="nav-number">6.6.</span> <span class="nav-text">实验六：WebP压缩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#制定方案"><span class="nav-number">6.7.</span> <span class="nav-text">制定方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附录"><span class="nav-number">8.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#图像的一些概念澄清"><span class="nav-number">8.1.</span> <span class="nav-text">图像的一些概念澄清</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#压缩算法概念"><span class="nav-number">8.2.</span> <span class="nav-text">压缩算法概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#微信图片处理规律"><span class="nav-number">8.3.</span> <span class="nav-text">微信图片处理规律</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Base64编码后大小"><span class="nav-number">8.4.</span> <span class="nav-text">Base64编码后大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS的pt与Android的sp"><span class="nav-number">8.5.</span> <span class="nav-text">iOS的pt与Android的sp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android图片质量会比iPhone的差？"><span class="nav-number">8.6.</span> <span class="nav-text">Android图片质量会比iPhone的差？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS的UIImage保存图片问题"><span class="nav-number">8.7.</span> <span class="nav-text">iOS的UIImage保存图片问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#压缩再压缩做了什么"><span class="nav-number">8.8.</span> <span class="nav-text">压缩再压缩做了什么</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz',
+    appKey: 'PeIEayFBbCg6sRnLi6yeImgD',
+    placeholder: 'Just say hi .',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn'
+  });
+</script>
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz',
+                'X-LC-Key': 'PeIEayFBbCg6sRnLi6yeImgD',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
