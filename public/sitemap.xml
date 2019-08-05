@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://zackzheng.info/2019/08/03/mac-app-drag-and-drop-produce-app-icon/</loc>
+    
+    <lastmod>2019-08-03T14:34:14.164Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://zackzheng.info/2019/04/24/create-xcode-plug-in-by-source-editor-extension/</loc>
     
     <lastmod>2019-05-16T01:29:47.000Z</lastmod>
