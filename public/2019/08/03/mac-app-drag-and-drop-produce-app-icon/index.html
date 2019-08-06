@@ -104,10 +104,12 @@
 <meta property="og:site_name" content="Just My Blog">
 <meta property="og:description" content="详细介绍了macOS开发中如何实现拖拽功能，并附上例子实现批量生成App的多尺寸icon">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-03T14:34:14.164Z">
+<meta property="og:image" content="https://zackzheng.info/2019/08/03/mac-app-drag-and-drop-produce-app-icon/readme.gif">
+<meta property="og:updated_time" content="2019-08-06T06:48:08.753Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="手把手教你实现macOS应用文件拖拽进窗口功能-批量生成APP的多尺寸icon实战">
 <meta name="twitter:description" content="详细介绍了macOS开发中如何实现拖拽功能，并附上例子实现批量生成App的多尺寸icon">
+<meta name="twitter:image" content="https://zackzheng.info/2019/08/03/mac-app-drag-and-drop-produce-app-icon/readme.gif">
 
 
 
@@ -399,12 +401,24 @@
                 
               
 
-              <time title="Created: 2019-08-03 14:00:00 / Modified: 22:34:14" itemprop="dateCreated datePublished" datetime="2019-08-03T14:00:00+08:00">2019-08-03</time>
+              <time title="Created: 2019-08-03 14:00:00" itemprop="dateCreated datePublished" datetime="2019-08-03T14:00:00+08:00">2019-08-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-08-06 14:48:08" itemprop="dateModified" datetime="2019-08-06T14:48:08+08:00">2019-08-06</time>
               
             
           </span>
@@ -521,6 +535,7 @@
 <h3 id="NSDraggingDestination"><a href="#NSDraggingDestination" class="headerlink" title="NSDraggingDestination"></a>NSDraggingDestination</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">draggingEntered</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo)</span></span> -&gt; <span class="type">NSDragOperation</span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">draggingUpdated</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo)</span></span> -&gt; <span class="type">NSDragOperation</span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">draggingExited</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo?)</span></span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">prepareForDragOperation</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo)</span></span> -&gt; <span class="type">Bool</span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">performDragOperation</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo)</span></span> -&gt; <span class="type">Bool</span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">concludeDragOperation</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo?)</span></span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">draggingEnded</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo)</span></span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">wantsPeriodicDraggingUpdates</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span></span><br><span class="line"><span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">updateDraggingItemsForDrag</span><span class="params">(<span class="number">_</span> sender: NSDraggingInfo?)</span></span></span><br></pre></td></tr></table></figure>
 <h3 id="NSView-拖拽相关的-Extension"><a href="#NSView-拖拽相关的-Extension" class="headerlink" title="NSView 拖拽相关的 Extension"></a>NSView 拖拽相关的 Extension</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="function"><span class="keyword">func</span> <span class="title">beginDraggingSession</span><span class="params">(with items: [NSDraggingItem], event: NSEvent, source: NSDraggingSource)</span></span> -&gt; <span class="type">NSDraggingSession</span></span><br><span class="line"><span class="keyword">open</span> <span class="keyword">var</span> registeredDraggedTypes: [<span class="type">NSPasteboard</span>.<span class="type">PasteboardType</span>] &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"><span class="keyword">open</span> <span class="function"><span class="keyword">func</span> <span class="title">registerForDraggedTypes</span><span class="params">(<span class="number">_</span> newTypes: [NSPasteboard.PasteboardType])</span></span></span><br><span class="line"><span class="keyword">open</span> <span class="function"><span class="keyword">func</span> <span class="title">unregisterDraggedTypes</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
 <h1 id="Demo-功能实现"><a href="#Demo-功能实现" class="headerlink" title="Demo 功能实现"></a>Demo 功能实现</h1><p>简单实现下功能。本文 Demo 详见文章末尾的链接。</p>
+<p><img src="/2019/08/03/mac-app-drag-and-drop-produce-app-icon/readme.gif" alt="readme.gif"></p>
 <h2 id="功能拆解"><a href="#功能拆解" class="headerlink" title="功能拆解"></a>功能拆解</h2><ol>
 <li>需求</li>
 </ol>

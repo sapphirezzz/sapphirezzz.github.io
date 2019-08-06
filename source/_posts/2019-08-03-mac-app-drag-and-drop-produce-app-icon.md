@@ -88,6 +88,8 @@ open func unregisterDraggedTypes()
 
 简单实现下功能。本文 Demo 详见文章末尾的链接。
 
+![readme.gif](readme.gif)
+
 ## 功能拆解
 
 1. 需求
