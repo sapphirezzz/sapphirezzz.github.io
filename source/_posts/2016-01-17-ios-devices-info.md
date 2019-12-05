@@ -31,6 +31,12 @@ description: 记录iOS所有设备的分辨率、尺寸，和一些细小的注�
 | iPhone 7/8            | 4.7        | 375x667        | 750x1334       | @2x          |
 | iPhone 7 Plus/8 Plus  | 5.5        | 414x736        | 1242x2208      | @3x          |
 | iPhone X              | 5.8        | 375x812        | 1125x2436      | @3x          |
+| iPhone Xs | 5.8 | 375x812 | 1125x2436 | @3x |
+| iPhone Xs Max | 6.5 | 414x896 | 1242x2688 | @3x |
+| iPhone Xr | 6.1 | 414x896 | 828x1792 | @2x |
+| iPhone 11 | 6.1 | 414x896 | 828x1792 | @2x |
+| iPhone 11 Pro | 5.8 | 375x812 | 1125x2436 | @3x |
+| iPhone 11 Pro Max | 6.5 | 414x896 | 1242x2688 | @3x |
 
 .
 
