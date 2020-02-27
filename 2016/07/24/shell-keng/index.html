@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="shell">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="主要讲用shell脚本过程中遇到的一些pwd、source、$0的连环坑">
+<meta name="keywords" content="shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="趣说shell脚本的pwd、source、$0的连环坑（iOS持续集成续）">
+<meta property="og:url" content="https://zackzheng.info/2016/07/24/shell-keng/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="主要讲用shell脚本过程中遇到的一些pwd、source、$0的连环坑">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-02-25T15:23:08.587Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="趣说shell脚本的pwd、source、$0的连环坑（iOS持续集成续）">
+<meta name="twitter:description" content="主要讲用shell脚本过程中遇到的一些pwd、source、$0的连环坑">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zackzheng.info/2016/07/24/shell-keng/">
+
+
+
+
+
+  <title>趣说shell脚本的pwd、source、$0的连环坑（iOS持续集成续） | Just My Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2016/07/24/shell-keng/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">趣说shell脚本的pwd、source、$0的连环坑（iOS持续集成续）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-24T16:00:00+08:00">
+                2016-07-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tech/" itemprop="url" rel="index">
+                    <span itemprop="name">Tech</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2016/07/24/shell-keng/" class="leancloud_visitors" data-flag-title="趣说shell脚本的pwd、source、$0的连环坑（iOS持续集成续）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  主要讲用shell脚本过程中遇到的一些pwd、source、$0的连环坑
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
+<li>前言</li>
+<li>踩坑跳坑出坑<ul>
+<li>pwd是获取当前的路径？</li>
+<li>source惹的祸／$0 也会骗人</li>
+<li>source/$0/pwd相互影响</li>
+<li>BASH_SOURCE[0]这又是什么东西？</li>
+<li>鲁棒性？用回pwd啦！</li>
+<li>又是source的坑！变量命名！</li>
+</ul>
+</li>
+<li>小结</li>
+</ul>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天重新写了之前的iOS自动化脚本，并加入自动上传符号表文件到Bugly的功能。结果遇到Shell的几个有趣的“坑”。</p>
+<p>简化成以下例子：</p>
+<blockquote>
+<p>/Users/zack/Desktop/a.sh<br>/Users/zack/Desktop/B/b.sh<br>/Users/zack/Desktop/B/C/c.sh</p>
+</blockquote>
+<p>有如上面路径结构的三个脚本文件a.sh、b.sh、c.sh。</p>
+<p>B目录内的文件是写给别人调用的，b.sh调用c.sh。假设在桌面有个a.sh调用了b.sh。</p>
+<p>实际过程写了很多脚本文件比较复杂，其实排查起坑来不像下面讲的那么简单，囧囧囧！</p>
+<h1 id="踩坑跳坑出坑"><a href="#踩坑跳坑出坑" class="headerlink" title="踩坑跳坑出坑"></a>踩坑跳坑出坑</h1><p>接着就开始小小的有趣的踩坑历程啦。</p>
+<h2 id="pwd是获取当前的路径？"><a href="#pwd是获取当前的路径？" class="headerlink" title="pwd是获取当前的路径？"></a>pwd是获取当前的路径？</h2><p>首先是a.sh调用b.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># a.sh</span><br><span class="line">/Users/zack/Desktop/B/b.sh</span><br></pre></td></tr></table></figure>
+
+<p>b.sh调用c.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">C/c.sh</span><br></pre></td></tr></table></figure>
+
+<p>c.sh随便干点什么</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># c.sh</span><br><span class="line">echo &quot;I&apos;m c.sh.&quot;</span><br></pre></td></tr></table></figure>
+
+<p>看起来挺正常的是吧？</p>
+<blockquote>
+<p>/Users/zack/Desktop/B/b.sh: line 1: C/c.sh: No such file or directory</p>
+</blockquote>
+<p>找不到c.sh？为什么？b.sh不是和C目录同一级吗？</p>
+<p>嗯想想……应该和被a.sh调用有关系。我是给别人用的工具，那么我并不知道a.sh会在哪调用我的b.sh。好吧，那我加个绝对路径。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">｀pwd｀/C/c.sh</span><br></pre></td></tr></table></figure>
+
+<p>又有问题？对，你猜的没错。</p>
+<blockquote>
+<p>/Users/zack/Desktop/B/b.sh: line 1: /Users/zack/Desktop/C/c.sh: No such file or directory</p>
+</blockquote>
+<p>好吧，为什么是<code>/Users/zack/Desktop/C/c.sh</code>这个路径呢？打印一下<code>｀pwd｀</code>，是<code>/Users/zack/Desktop</code>。为虾米？这个不是获取当前工作目录吗？</p>
+<p>噢我一定是撞鬼了！不，我是唯物主义者！再想想……这个是a.sh的路径，也就是说这个还是跟调用者有关（后文会解释shell进程相关的原因）。</p>
+<p>网上度娘说用这个<code>dirname</code>取<code>$0</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">`dirname $0`/C/c.sh</span><br></pre></td></tr></table></figure>
+
+<p>看结果：</p>
+<blockquote>
+<p>I’m c.sh.</p>
+</blockquote>
+<p>哇真的可以，感谢度娘！</p>
+<p><code>dirname</code>用于取给定路径的目录部分,<code>$0</code>是Shell本身的文件名。</p>
+<p>继续写代码。</p>
+<h2 id="source惹的祸／-0-也会骗人"><a href="#source惹的祸／-0-也会骗人" class="headerlink" title="source惹的祸／$0 也会骗人"></a>source惹的祸／$0 也会骗人</h2><p>发现用source也可以调用其他shell脚本文件。试试。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">source `dirname $0`/C/c.sh</span><br></pre></td></tr></table></figure>
+
+<p>执行一下./a.sh。嗯也是可以的。然后改改c.sh。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># c.sh</span><br><span class="line">echo &quot;I&apos;m c.sh.&quot;</span><br><span class="line">echo `dirname $0`</span><br></pre></td></tr></table></figure>
+
+<p>这时候第二行打印应该是c.sh所在的路径，对吧？</p>
+<p>不，你错了！！！哈哈哈！</p>
+<blockquote>
+<p>I’m c.sh.<br>/Users/zack/Desktop/B</p>
+</blockquote>
+<p>为什么是B目录？不是应该<code>/Users/zack/Desktop/C</code>吗？我书读得少你不要骗我！！！</p>
+<p>打印下<code>$0</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># c.sh</span><br><span class="line">echo &quot;I&apos;m c.sh.&quot;</span><br><span class="line">echo `dirname $0`</span><br><span class="line">echo $0</span><br></pre></td></tr></table></figure>
+
+<p>下面是b.sh用source之后的：</p>
+<blockquote>
+<p>I’m c.sh.<br>/Users/zack/Desktop/B<br>/Users/zack/Desktop/B/b.sh</p>
+</blockquote>
+<p>下面是b.sh直接用路径之后的：</p>
+<blockquote>
+<p>I’m c.sh.<br>/Users/zack/Desktop/B/C<br>/Users/zack/Desktop/B/C/c.sh</p>
+</blockquote>
+<p>哦哦哦，原来是你，source！终于把你揪出来了！用了source之后会导致<code>$0</code>不同。</p>
+<p>下面是考试重点，记住了！！</p>
+<blockquote>
+<p>source命令，不再产生新的shell，而是在当前shell下执行一切命令。</p>
+<p>source FileName，作用：在当前bash环境下读取并执行FileName中的命令。</p>
+<p>source在本shell中执行的，所以能够看到结果</p>
+<p>调用绝对路径执行shell是在一个子shell里运行的，所以执行后，结果并没有反应到父shell里。</p>
+</blockquote>
+<p>嗯明白了！source使用的脚本是在当前shell进程下进行的，所以<code>$0</code>依旧是当前的b.sh。那么之前的<code>pwd</code>应该是当前shell进程的工作目录，这个可以理解了。在a.sh调用b.sh，a.sh没有执行任何<code>cd dir</code>操作，b.sh也没有，所以<code>pwd</code>仍然是a.sh所在目录。</p>
+<h2 id="source-0-pwd相互影响"><a href="#source-0-pwd相互影响" class="headerlink" title="source/$0/pwd相互影响"></a>source/$0/pwd相互影响</h2><p>做个实验：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">echo `pwd`</span><br><span class="line">source `dirname $0`/C/c.sh</span><br><span class="line">echo `pwd`</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># c.sh</span><br><span class="line">cd ..</span><br><span class="line">echo &quot;I&apos;m c.sh.&quot;</span><br></pre></td></tr></table></figure>
+
+<p>猜猜这时候b.sh打印什么？</p>
+<blockquote>
+<p>/Users/zack/Desktop<br>I’m c.sh.<br>/Users/zack</p>
+</blockquote>
+<p>如果b.sh再改成这样呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">echo `pwd`</span><br><span class="line">`dirname $0`/C/c.sh</span><br><span class="line">echo `pwd`</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>/Users/zack/Desktop<br>I’m c.sh.<br>/Users/zack/Desktop</p>
+</blockquote>
+<p>哈哈很有趣，这样可以很容易很真切理解这几个东西的作用和影响了！</p>
+<h2 id="BASH-SOURCE-0-这又是什么东西？"><a href="#BASH-SOURCE-0-这又是什么东西？" class="headerlink" title="BASH_SOURCE[0]这又是什么东西？"></a>BASH_SOURCE[0]这又是什么东西？</h2><p> 上面的问题还是没有解决。基友丢来一行代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;$( cd &quot;$( dirname &quot;$&#123;BASH_SOURCE[0]&#125;&quot; )&quot; &amp;&amp; pwd )&quot;</span><br></pre></td></tr></table></figure>
+
+<p>用BASH_SOURCE[0]来获取当前脚本的路径。</p>
+<blockquote>
+<p>与FUNCNAME相似的另外一个比较有用的常量是BASH_SOURCE，同样是一个数组，不过它的第一个元素是当前脚本的名称。<br>这在source的时候非常有用，因为在被source的脚本中，$0是父脚本的名称，而不是被source的脚本名称。而BASH_SOURCE就可以派上用场了。<br>唯一遗憾的是，这种做法会让脚本失去一些可移植性，因为不是所有的shell都支持这些常量。</p>
+</blockquote>
+<p>试下试下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">`dirname $0`/C/c.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># c.sh</span><br><span class="line">echo &quot;I&apos;m c.sh.&quot;</span><br><span class="line">echo `dirname $&#123;BASH_SOURCE[0]&#125;`</span><br></pre></td></tr></table></figure>
+
+<p>结果如下，哐哐哐！</p>
+<blockquote>
+<p>I’m c.sh.<br>/Users/zack/Desktop/B/C</p>
+</blockquote>
+<p>b.sh再改成source c.sh的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">source `dirname $0`/C/c.sh</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>I’m c.sh.<br>/Users/zack/Desktop/B/C</p>
+</blockquote>
+<p>Good的！哈哈哈！好高兴解决了！</p>
+<h2 id="鲁棒性？用回pwd啦！"><a href="#鲁棒性？用回pwd啦！" class="headerlink" title="鲁棒性？用回pwd啦！"></a>鲁棒性？用回pwd啦！</h2><p>从<strong>source/$0/pwd相互影响</strong>这节的实验可以看到，b.sh使用source c.sh时，在c.sh里面cd dir，会影响外面的pwd；而直接调用c.sh的话，即使cd dir，回到b.sh依旧不影响pwd。</p>
+<p>我怎么尽可能保证鲁棒性呢？因为我不知道别人是怎么调用我的。设计得好的话，作为被调用者，应该只产生脚本本身的作用，而不影响到其他东西，比如调用者的工作目录路径。</p>
+<p>从另一个角度，我作为调用者的话，怎么防止被调用者影响到我的工作目录路径呢？因为我们经常用pwd来做些操作的。</p>
+<p>解决大概如下：</p>
+<ol>
+<li>作为调用者，尽可能使用绝对路径或相对路径调用其他脚本文件，不用source；或者在使用其他脚本文件前保存路径<code>pwd=｀pwd｀</code>，调用完后再<code>cd pwd</code>回去。</li>
+<li>作为被调用者，同上，在开始前保存pwd文件，执行完任务后再cd回去。</li>
+</ol>
+<h2 id="又是source的坑！变量命名！"><a href="#又是source的坑！变量命名！" class="headerlink" title="又是source的坑！变量命名！"></a>又是source的坑！变量命名！</h2><p>呼呼差不多了，再加点东西。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># b.sh</span><br><span class="line">myPath=`dirname $&#123;BASH_SOURCE[0]&#125;`</span><br><span class="line">echo $myPath</span><br><span class="line">source $&#123;myPath&#125;/C/c.sh</span><br><span class="line">echo $myPath</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># c.sh</span><br><span class="line">myPath=`pwd`</span><br><span class="line">echo &quot;I&apos;m c.sh.&quot;</span><br><span class="line">cd $myPath</span><br></pre></td></tr></table></figure>
+
+<p>这里然后c.sh保存了当前路径，最后返回当前路径。b.sh保存了一个<code>myPath</code>，调用b.sh前后各打印一次。你猜打印结果一样吗？？</p>
+<blockquote>
+<p>/Users/zack/Desktop/B<br>I’m c.sh.<br>/Users/zack/Desktop</p>
+</blockquote>
+<p>没道理啊，为什么呢？c.sh应该是不会影响到路径的啊！这个做过试验了的。</p>
+<p>猜不到吧，因为c.sh的myPath覆盖了b.sh……</p>
+<p>因为source c.sh之后，c.sh和b.sh在同一个shell进程下运行，变量也公用，所以……</p>
+<p>怎么解决呢？只能是通过命名空间或者命名规则了吧！</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>呼呼至此结束了！</p>
+<p>shell脚本挺有趣的，虽然有时处理些东西麻烦或者不够规范，比如获取脚本参数、脚本只能返回整型等。晚了，关于pwd、source、$0等等相关更细的知识就不介绍了，度娘知道。</p>
+<p>自动化编译脚本也重写得很优雅很美了！类似下面这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function archive() &#123;</span><br><span class="line">&#125;</span><br><span class="line">function exportArchive() &#123;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">archive</span><br><span class="line">exportArchive</span><br><span class="line">publishToFirIfNeed</span><br><span class="line">submitAppStoreIfNeed</span><br><span class="line">sendEmail</span><br></pre></td></tr></table></figure>
+
+<p>所有变量什么的都放在函数里面，每个函数再分别调用其他脚本文件。打包、包导出、上传fir、上传appStore、发邮件都分到单独的脚本文件，每个可以单独用；整个根调用文件看起来整洁清晰，步骤也很明显，做的事情就是最下面那5个调用。</p>
+<p>后面会补到之前写的文章中：<br>简书：<a href="http://www.jianshu.com/p/bd4c22952e01" target="_blank" rel="noopener">详解Shell脚本实现iOS自动化编译打包提交</a><br>个人博客：<a href="http://zackzheng.info/2015/12/27/2015-12-27-an-automated-script-for-building-archiving-submission-sending-emails">详解Shell脚本实现iOS自动化编译打包提交</a></p>
+<p>让编程一直成为一种有趣的爱好！</p>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://zackzheng.info">https://zackzheng.info</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shell/" rel="tag"># shell</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/31/ios-in-app-purchase-iap/" rel="next" title="iOS In-App Purchase(IAP) 流程与实现">
+                <i class="fa fa-chevron-left"></i> iOS In-App Purchase(IAP) 流程与实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/31/ios-live-comment-praise/" rel="prev" title="iOS直播：评论框与粒子系统点赞动画">
+                iOS直播：评论框与粒子系统点赞动画 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpeg" alt="Zack Zheng">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <p class="site-description motion-element" itemprop="description">Zack Zheng's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sapphirezzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhengzuanzhe@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#踩坑跳坑出坑"><span class="nav-number">3.</span> <span class="nav-text">踩坑跳坑出坑</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pwd是获取当前的路径？"><span class="nav-number">3.1.</span> <span class="nav-text">pwd是获取当前的路径？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#source惹的祸／-0-也会骗人"><span class="nav-number">3.2.</span> <span class="nav-text">source惹的祸／$0 也会骗人</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#source-0-pwd相互影响"><span class="nav-number">3.3.</span> <span class="nav-text">source/$0/pwd相互影响</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BASH-SOURCE-0-这又是什么东西？"><span class="nav-number">3.4.</span> <span class="nav-text">BASH_SOURCE[0]这又是什么东西？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#鲁棒性？用回pwd啦！"><span class="nav-number">3.5.</span> <span class="nav-text">鲁棒性？用回pwd啦！</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#又是source的坑！变量命名！"><span class="nav-number">3.6.</span> <span class="nav-text">又是source的坑！变量命名！</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz", "PeIEayFBbCg6sRnLi6yeImgD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
