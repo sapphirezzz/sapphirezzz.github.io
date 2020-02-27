@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://zackzheng.info/2020/02/25/2020-family/</loc>
-    <lastmod>2020-02-25</lastmod>
+    <lastmod>2020-02-27</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2019/09/22/scrollview-auto-play-video/</loc>
     <lastmod>2020-02-25</lastmod>
@@ -52,13 +52,13 @@
     <loc>https://zackzheng.info/2015/12/05/review-of-the-devil's-advocate/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/</loc>
+    <loc>https://zackzheng.info/2016/01/17/ios-devices-info/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2016/01/26/universal-links/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2016/01/17/ios-devices-info/</loc>
+    <loc>https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/06/use-code-block-without-analysis/</loc>
@@ -82,10 +82,10 @@
     <loc>https://zackzheng.info/2015/06/07/sitemap-of-your-octopress-blog/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/09/14/going-hiking-through-the-tung-west-chung-coast/</loc>
+    <loc>https://zackzheng.info/2015/07/23/the-most-normal-but-warm-moment/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/07/23/the-most-normal-but-warm-moment/</loc>
+    <loc>https://zackzheng.info/2015/09/14/going-hiking-through-the-tung-west-chung-coast/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/02/22/scroll-to-top-for-my-octopress-blog/</loc>
@@ -97,16 +97,16 @@
     <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/03/07/share-some-experience-in-using-git-in-my-project/</loc>
-    <lastmod>2020-02-25</lastmod>
-  </url>  <url>
     <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
+    <loc>https://zackzheng.info/2015/03/07/share-some-experience-in-using-git-in-my-project/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
+    <lastmod>2020-02-25</lastmod>
+  </url>  <url>
+    <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
     <lastmod>2020-02-25</lastmod>
   </url>
 </urlset>
