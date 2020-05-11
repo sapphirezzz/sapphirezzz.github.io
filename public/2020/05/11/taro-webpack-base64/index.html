@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Taro,webpack,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Taro下的webpack配置，对图片素材的base64编码的处理">
+<meta name="keywords" content="Taro,webpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Taro图片素材不显示？--Taro下的webpack配置">
+<meta property="og:url" content="https://zackzheng.info/2020/05/11/taro-webpack-base64/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="Taro下的webpack配置，对图片素材的base64编码的处理">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-11T13:54:33.845Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Taro图片素材不显示？--Taro下的webpack配置">
+<meta name="twitter:description" content="Taro下的webpack配置，对图片素材的base64编码的处理">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zackzheng.info/2020/05/11/taro-webpack-base64/">
+
+
+
+
+
+  <title>Taro图片素材不显示？--Taro下的webpack配置 | Just My Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2020/05/11/taro-webpack-base64/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Taro图片素材不显示？--Taro下的webpack配置</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-11T19:00:00+08:00">
+                2020-05-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tech/" itemprop="url" rel="index">
+                    <span itemprop="name">Tech</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/05/11/taro-webpack-base64/" class="leancloud_visitors" data-flag-title="Taro图片素材不显示？--Taro下的webpack配置">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  Taro下的webpack配置，对图片素材的base64编码的处理
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近遇到<code>Taro</code>下图片素材没显示的小问题，解决完顺藤摸瓜了解了下前端领域<code>webpack</code>及其<code>Loader</code>的一些原理。</p>
+<p>本文只是简单作个记录，涉及<code>Taro</code>下一些<code>webpack</code>的配置，可以为刚好遇到类似问题的人提供可能的助益。</p>
+<p>文末也简单讨论了图片素材转变成<code>base64</code>编码这种处理方式。</p>
+<h1 id="场景和问题解决"><a href="#场景和问题解决" class="headerlink" title="场景和问题解决"></a>场景和问题解决</h1><p>使用 <code>map</code>组件展示<code>markers</code>，代码如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> LocationIcon <span class="keyword">from</span> <span class="string">'../xxx.png'</span></span><br><span class="line"><span class="keyword">class</span> XXX &#123;</span><br><span class="line">  render () &#123;</span><br><span class="line">    <span class="comment">// 定义marker</span></span><br><span class="line">    <span class="keyword">var</span> markers = [&#123;</span><br><span class="line">        iconPath: LocationIcon,</span><br><span class="line">        id: <span class="number">0</span>,</span><br><span class="line">        latitude,</span><br><span class="line">        longitude,</span><br><span class="line">        width: <span class="number">38</span>,</span><br><span class="line">        height: <span class="number">50</span></span><br><span class="line">    &#125;];</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      ...</span><br><span class="line">      &lt;Map className=<span class="string">'...'</span> id=<span class="string">"..."</span> longitude=&#123;longitude&#125; latitude=&#123;latitude&#125; markers=&#123;markers&#125;&gt;&lt;<span class="regexp">/Map&gt;</span></span><br><span class="line"><span class="regexp">      ...</span></span><br><span class="line"><span class="regexp">    )</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="问题一：真机没有显示-iconPath-的素材？"><a href="#问题一：真机没有显示-iconPath-的素材？" class="headerlink" title="问题一：真机没有显示 iconPath 的素材？"></a>问题一：真机没有显示 iconPath 的素材？</h2><p><strong>思路：</strong></p>
+<ul>
+<li>可能 <code>iconPath</code>的设置有限制，查看 <a href="https://developers.weixin.qq.com/miniprogram/dev/component/map.html#map" target="_blank" rel="noopener">微信小程序Map组件文档</a>。</li>
+</ul>
+<blockquote>
+<p><code>iconPath</code>，显示的图标，类型<code>string</code>，项目目录下的图片路径，支持网络路径、本地路径、代码包路径（[2.3.0]）</p>
+</blockquote>
+<p>图片是按 <a href="https://taro-docs.jd.com/taro/docs/static-reference.html#引用图片-音频-字体等文件" target="_blank" rel="noopener">Taro-引用图片、音频、字体等文件</a> 所说，通过 <code>ES6</code> 的 <code>import</code> 语法来引用的，即“项目目录下的图片路径”，所以不是组件使用问题。</p>
+<ul>
+<li>检查运行过程中生成的Wxml，看看是否生成有问题，以此倒推</li>
+</ul>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="built_in">Map</span> className=<span class="string">'...'</span> id=<span class="string">"..."</span> longitude=&#123;...&#125; latitude=&#123;...&#125; markers=<span class="string">"[&#123;"</span>iconPath<span class="string">":"</span>data:image/png;base64,iVBOR...<span class="string">"&#125;]"</span>&gt;&lt;/Map&gt;</span><br></pre></td></tr></table></figure>
+<p>发现<code>iconPath</code>的值变成了<code>base64</code>编码后的数据。</p>
+<p><strong>小结：</strong></p>
+<p>至此，找到直接原因，真机环境<code>Taro</code>打包对有些素材进行base64编码，设置给<code>iconPath</code>后，不满足文档要求，所以无法显示。</p>
+<h2 id="问题二：那为什么有些素材有展示？有些没有展示？"><a href="#问题二：那为什么有些素材有展示？有些没有展示？" class="headerlink" title="问题二：那为什么有些素材有展示？有些没有展示？"></a>问题二：那为什么有些素材有展示？有些没有展示？</h2><p><strong>思路：</strong></p>
+<ul>
+<li>查看几处引用素材的地方运行过程中生成的Wxml：</li>
+</ul>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;image src=<span class="string">"data:image/png;base64,iVBOR..."</span> ...&gt;</span><br><span class="line">&lt;image src=<span class="string">".../.../xxx.png"</span> ...&gt;</span><br></pre></td></tr></table></figure>
+<p>发现相同的用法，有些素材是变成<code>base64</code>数据，有些依旧是素材路径。</p>
+<ul>
+<li>比较素材的区别</li>
+</ul>
+<p>查看素材发现，编码成<code>base64</code>的，都是几KB的小素材；使用路径的，是十几KB甚至更大的素材。</p>
+<p><strong>小结：</strong></p>
+<p>依此推断，<code>Taro</code>只对小素材进行了<code>base64</code>编码处理，而对于较大的素材，没有改动。</p>
+<h2 id="问题三：这个处理是如何配置的？"><a href="#问题三：这个处理是如何配置的？" class="headerlink" title="问题三：这个处理是如何配置的？"></a>问题三：这个处理是如何配置的？</h2><p><strong>思路：</strong></p>
+<p>大晚上的，私聊了一下<code>Taro</code>的主程，告知这是<code>webPack</code>进行的处理。于是找到了Taro文档 <a href="https://taro-docs.jd.com/taro/docs/config-detail.html#miniimageurlloaderoption" target="_blank" rel="noopener">进阶指南-编译配置详情</a>。此处对配置进行了简单说明。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mini.imageUrlLoaderOption</span><br></pre></td></tr></table></figure>
+<p>需要参考<a href="https://github.com/webpack-contrib/url-loader" target="_blank" rel="noopener"><code>url-loader README</code></a>关于配置字段的说明。</p>
+<p>最终配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// config/index.js</span></span><br><span class="line">mini: &#123;</span><br><span class="line">    imageUrlLoaderOption: &#123;</span><br><span class="line">      limit: <span class="number">10000</span>,</span><br><span class="line">      mimetype: <span class="string">'image/png'</span>,</span><br><span class="line">      encoding: <span class="string">'base64'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此处配置<code>imageUrlLoaderOption</code>的作用是，对于<code>png</code>的图片素材，如果体积超过了10000B，则进行<code>base64</code>编码。</p>
+<p><code>Taro</code>在新版本完全开放了<code>WebPack</code>的配置，有很多插件可以配置，文档列的比较详细，此处就不再赘述了。主要是以后遇到一些问题可以想到用<code>webpack</code>这个层面去解决。</p>
+<h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><p>到此可能会想，为什么会有这样的配置？有什么好处？</p>
+<p>简单总结下我的想法：</p>
+<ol>
+<li>相比网络图片，使用<code>base64</code>编码的方式，减少加载图片的<code>http</code>请求次数，没有因网络加载而带来的延时。</li>
+<li><code>base64</code>编码只是一种编码方式，不是一种压缩方式，它实际上会增加图片本身的大小（在我之前的文章有介绍过），图片越大增加的越多。</li>
+<li>相比网络图片，如果是大图进行<code>base64</code>编码，和多一次<code>http</code>请求的耗时比起来，显然划不来。</li>
+</ol>
+<p>疑问：</p>
+<ol>
+<li>同一个素材多处使用，进行<code>base64</code>编码，会不会导致<code>CSS</code>大小增加？不清楚有待考证。</li>
+<li>小的本地素材，进行<code>base64</code>编码有什么好处？大概同“素材加载”和“CSS加载”的区别有关系。</li>
+</ol>
+<p>如果有前端的同学知道，请不吝赐教哈。</p>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://zackzheng.info">https://zackzheng.info</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Taro/" rel="tag"># Taro</a>
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/25/2020-family/" rel="next" title="2020年，亲情最浓厚的春节">
+                <i class="fa fa-chevron-left"></i> 2020年，亲情最浓厚的春节
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sapphirezzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhengzuanzhe@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#场景和问题解决"><span class="nav-number">2.</span> <span class="nav-text">场景和问题解决</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一：真机没有显示-iconPath-的素材？"><span class="nav-number">2.1.</span> <span class="nav-text">问题一：真机没有显示 iconPath 的素材？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二：那为什么有些素材有展示？有些没有展示？"><span class="nav-number">2.2.</span> <span class="nav-text">问题二：那为什么有些素材有展示？有些没有展示？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题三：这个处理是如何配置的？"><span class="nav-number">2.3.</span> <span class="nav-text">问题三：这个处理是如何配置的？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展"><span class="nav-number">3.</span> <span class="nav-text">扩展</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.3/jquery.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.ui.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz", "PeIEayFBbCg6sRnLi6yeImgD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

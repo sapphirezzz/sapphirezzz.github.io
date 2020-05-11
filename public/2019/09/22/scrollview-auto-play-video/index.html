@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS 短视频 滚动播放 滚动自动播放">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简单介绍了包含视频的列表滚动自动播放的方案">
+<meta name="keywords" content="iOS 短视频 滚动播放 滚动自动播放">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手把手教你实现视频列表滚动自动播放-短视频列表滚动播放实战">
+<meta property="og:url" content="https://zackzheng.info/2019/09/22/scrollview-auto-play-video/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="简单介绍了包含视频的列表滚动自动播放的方案">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zackzheng.info/2019/09/22/scrollview-auto-play-video/demo.gif">
+<meta property="og:updated_time" content="2020-05-11T13:54:33.840Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="手把手教你实现视频列表滚动自动播放-短视频列表滚动播放实战">
+<meta name="twitter:description" content="简单介绍了包含视频的列表滚动自动播放的方案">
+<meta name="twitter:image" content="https://zackzheng.info/2019/09/22/scrollview-auto-play-video/demo.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zackzheng.info/2019/09/22/scrollview-auto-play-video/">
+
+
+
+
+
+  <title>手把手教你实现视频列表滚动自动播放-短视频列表滚动播放实战 | Just My Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2019/09/22/scrollview-auto-play-video/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">手把手教你实现视频列表滚动自动播放-短视频列表滚动播放实战</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-22T15:30:00+08:00">
+                2019-09-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/09/22/scrollview-auto-play-video/" class="leancloud_visitors" data-flag-title="手把手教你实现视频列表滚动自动播放-短视频列表滚动播放实战">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  简单介绍了包含视频的列表滚动自动播放的方案
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
+<li>前言</li>
+<li>方案实现<ul>
+<li>原始需求</li>
+<li>隐藏需求</li>
+<li>方案制定</li>
+<li>具体实现</li>
+</ul>
+</li>
+<li>总结</li>
+<li>附录</li>
+</ul>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>互联网内容已经逐渐从图文阅读往如今火热的短视频更迭，某种程度上短视频有着图文所没有的优势和不可替代性，降低了自我表达的门槛。近期迭代做了个短视频列表滚动自动播放的需求，上线了一段时间。觉得略有趣，简单分享下方案。</p>
+<p>本文提供了 Demo ，将方案进行简化处理，只包含核心的功能实现。</p>
+<blockquote>
+<p>本文的 Demo 附在文末</p>
+</blockquote>
+<h1 id="方案实现"><a href="#方案实现" class="headerlink" title="方案实现"></a>方案实现</h1><p><img src="/2019/09/22/scrollview-auto-play-video/demo.gif" alt="demo.gif"></p>
+<p>介绍下整个方案的思考和实现的一些过程。</p>
+<h2 id="原始需求"><a href="#原始需求" class="headerlink" title="原始需求"></a>原始需求</h2><p>简化如下：</p>
+<ul>
+<li>自动播放条件</li>
+</ul>
+<p>Wifi环境下，当视频中心位置从下往上越过屏幕的2/3位置，或从上往下越过屏幕的1/3位置时，视频开始自动播放；</p>
+<ul>
+<li>停止播放条件</li>
+</ul>
+<p>当视频中心位置离开可见区域时，视频自动停止播放。若下一个视频满足开始自动播放的条件，则上一个视频自动停止播放。</p>
+<ul>
+<li>手动播放</li>
+</ul>
+<p>点播放按钮可手动开始播放。开始播放某视频后，其他视频停止播放。</p>
+<h2 id="隐藏需求"><a href="#隐藏需求" class="headerlink" title="隐藏需求"></a>隐藏需求</h2><p>原始需求背后需要考虑的其他情况：</p>
+<ul>
+<li>页面进入/离开的处理</li>
+<li>App进入后台/返回前台的处理</li>
+<li>从一个视频列表跳转到另一个视频列表的处理</li>
+<li>页面包含安全区的处理</li>
+<li>列表滚动播放的性能问题</li>
+<li>视频循环播放/静音功能</li>
+<li>上拉加载更多/下拉刷新等动作触发的滚动的处理</li>
+<li>列表 cell 的复用问题</li>
+</ul>
+<h2 id="方案制定"><a href="#方案制定" class="headerlink" title="方案制定"></a>方案制定</h2><p>主要考虑了以下一些方面：</p>
+<ol>
+<li>优先考虑的是性能问题，同一个列表中尽量只有一个视频控件</li>
+<li>尽量降低方案的侵入性，目前有多个现有列表需要支持该功能，涉及到多个 controller 和多个 cell ，侵入性低也利于改动和维护</li>
+<li>隐藏需求会影响到自动播放逻辑的调用时机</li>
+</ol>
+<p>大致思路如下：</p>
+<ol>
+<li>由一个类管理整个 App 的视频滚动播放的相关逻辑，包括视频组件。</li>
+<li>由 controller 监控滚动，触发管理类进行处理。管理类计算当前符合自动播放的视频，播放并将视频组件嵌入 cell 中。</li>
+<li>为了降低侵入性，采用协议实现管理类和 controller、管理类和 cell 间的通信。也利于改动逻辑时只改动到管理类，而不是牵涉各个调用处和 cell。</li>
+</ol>
+<p>隐藏需求处理：</p>
+<ol>
+<li>页面进入/离开的处理、从一个视频列表跳转到另一个视频列表的处理</li>
+</ol>
+<p>在 controller 的生命周期中去调用管理类方法进行处理。离开时停止当前播放中的视频，进入时播放当前列表的视频。进入时判断数据源是否已经获取，已经获取则调用播放。另外在数据源获取后判断是否已经 Appear，是则调用播放。用变量标志避免两个逻辑重复调用。</p>
+<ol start="2">
+<li>App进入后台/返回前台的处理</li>
+</ol>
+<p>App 进入后台/返回前台不会调用 controller 的生命周期，需要另外处理。</p>
+<ol start="3">
+<li>页面包含安全区的处理</li>
+</ol>
+<p>在计算视频的相对位置时，将安全区考虑在内进行计算。</p>
+<ol start="4">
+<li>列表滚动播放的性能问题</li>
+</ol>
+<p>测试<strong>列表滚动停止时</strong>、<strong>实时滚动时</strong>、<strong>滚动降速到一定速度时</strong>等情况下，调用自动播放逻辑的性能和体验，</p>
+<ol start="5">
+<li>视频循环播放/静音功能</li>
+</ol>
+<p>视频播放完毕的事件需要通过监听 NSNotification.Name.AVPlayerItemDidPlayToEndTime 实现，放在管理类中进行处理。</p>
+<ol start="6">
+<li>上拉加载更多/下拉刷新等动作触发的滚动的处理</li>
+</ol>
+<p>在这两种情况下，需要停止页面的逻辑调用，直到数据源返回成功或失败为止。</p>
+<ol start="7">
+<li>列表 cell 的复用问题</li>
+</ol>
+<p>复用时需要重新布置frame、清空数据源等。</p>
+<h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><ol>
+<li><strong>定义管理类 VideoListAutoPlayManager</strong></li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VideoListAutoPlayManager</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">        playerVC.player = <span class="type">AVPlayer</span>()</span><br><span class="line">        playerVC.showsPlaybackControls = <span class="literal">false</span></span><br><span class="line">        playerVC.view.backgroundColor = <span class="type">UIColor</span>.clear</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> shared = <span class="type">VideoListAutoPlayManager</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> playerVC: <span class="type">AVPlayerViewController</span> = <span class="type">AVPlayerViewController</span>()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> preOffsetY: <span class="type">CGFloat</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> currentPlayingView: <span class="type">VideoPlayable?</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要保存一些信息和状态，所以定义成单例。</p>
+<p>AVPlayerViewController 自带控制条，需要隐藏。</p>
+<p>视频播放时背景从黑色开始，会导致出现先看到封面，然后黑色，然后再播放视频的问题，设置为透明会让从封面到视频的过渡自然。</p>
+<p>preOffsetY 记录当前滚动的 UIScrollView 的 contentOffset.y 。用于在多个视频满足自动播放时，通过判断滚动方向来决定选取哪个视频自动播放。</p>
+<p>currentPlayingView 记录当前播放中的 cell。用于通知上一个播放的 cell 即将停止播放视频，方便 cell 处理另外的逻辑。</p>
+<ol start="2">
+<li><strong>定义协议</strong></li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">VideoPlayable</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> viewToContainVideo: <span class="type">UIView</span> &#123;<span class="keyword">get</span>&#125;</span><br><span class="line">    <span class="keyword">var</span> urlToPlay: <span class="type">URL?</span> &#123;<span class="keyword">get</span>&#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">videoStatusChanged</span><span class="params">(changeTo isPlaying: Bool)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">VideoListPlayable</span>: <span class="title">UIScrollView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> visibleViews: [<span class="type">VideoPlayable</span>] &#123;<span class="keyword">get</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UITableView</span>: <span class="title">VideoListPlayable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> visibleViews: [<span class="type">VideoPlayable</span>] &#123;</span><br><span class="line">        <span class="keyword">let</span> views: [<span class="type">VideoPlayable</span>] = visibleCells.compactMap(&#123; $<span class="number">0</span> <span class="keyword">as</span>? <span class="type">VideoPlayable</span> &#125;)</span><br><span class="line">        <span class="keyword">return</span> views</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UICollectionView</span>: <span class="title">VideoListPlayable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> visibleViews: [<span class="type">VideoPlayable</span>] &#123;</span><br><span class="line">        <span class="keyword">let</span> views: [<span class="type">VideoPlayable</span>] = visibleCells.compactMap(&#123; $<span class="number">0</span> <span class="keyword">as</span>? <span class="type">VideoPlayable</span> &#125;)</span><br><span class="line">        <span class="keyword">return</span> views</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一个协议，VideoPlayable，是存放视频的 cell 需要实现的。实现协议返回需要包含视频的 view ，需要播放的视频 URL，以及用于 VideoListAutoPlayManager 通知 cell 处理视频播放状态变化的调用方法。</p>
+<p>第二个协议，VideoListPlayable，是滚动列表需要实现的。实现协议返回滚动列表当前可见的 cell，用于 VideoListPlayable 去判断哪些视频需要自动播放。</p>
+<p>两个协议都遵循某个类，UIView 或 UIScrollView，是有些取巧，方便后面取 frame 等。也可以不遵循，然后在协议中返回需要的数据即可。</p>
+<p>另外为 UITableView 和 UICollectionView 做了默认实现。</p>
+<ol start="3">
+<li><strong>触发滚动播放的处理</strong></li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">scrollViewDidScroll</span><span class="params">(<span class="number">_</span> scrollView: VideoListPlayable)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> currentOffsetY = scrollView.contentOffset.y</span><br><span class="line">    <span class="keyword">let</span> minY = scrollView.frame.height / <span class="number">3</span></span><br><span class="line">    <span class="keyword">let</span> maxY = minY * <span class="number">2</span></span><br><span class="line">    <span class="comment">// 获取在 scrollView 自动播放区域内的视频</span></span><br><span class="line">    <span class="keyword">let</span> autoPlayableViews = scrollView.visibleViews.<span class="built_in">filter</span> &#123; view <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> relativeRect = relativeRect(view: view.viewToContainVideo, relativeTo: scrollView), view.urlToPlay != <span class="literal">nil</span> <span class="keyword">else</span> &#123;<span class="keyword">return</span> <span class="literal">false</span>&#125;</span><br><span class="line">        <span class="keyword">let</span> containerCenterY = relativeRect.minY + relativeRect.height / <span class="number">2</span></span><br><span class="line">        <span class="keyword">return</span> (containerCenterY &gt; minY &amp;&amp; containerCenterY &lt; maxY)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> first = autoPlayableViews.first <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 没有需要自动播放的视频</span></span><br><span class="line">        <span class="comment">// 移除当前正在离开/已经离开屏幕的视频</span></span><br><span class="line">        removeCurrentVideoIfLeavingScreen(scrollView: scrollView)</span><br><span class="line">        preOffsetY = currentOffsetY</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 取出需要自动播放的视频</span></span><br><span class="line">    <span class="keyword">let</span> viewToPlay: <span class="type">VideoPlayable</span> = autoPlayableViews.<span class="built_in">reduce</span>(first) &#123; (result, view) <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">let</span> isScrollToUpper = currentOffsetY &lt; preOffsetY</span><br><span class="line">        <span class="keyword">return</span> result.frame.maxY &gt; view.frame.maxY ? (isScrollToUpper ? view : result) : (isScrollToUpper ? result : view)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> currentPlayingView = currentPlayingView, viewToPlay <span class="keyword">as</span> <span class="type">UIView</span> == currentPlayingView &#123;</span><br><span class="line">        <span class="comment">// 满足条件的视频正在播放中</span></span><br><span class="line">        preOffsetY = currentOffsetY</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    removeCurrentVideo(on: scrollView)</span><br><span class="line"></span><br><span class="line">    addPlayerView(to: viewToPlay, on: scrollView)</span><br><span class="line">    preOffsetY = currentOffsetY</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>VideoListAutoPlayManager 提供该方法用于 controller 需要进行视频自动播放处理时进行调用。</p>
+<blockquote>
+<p>外部可以自行决定在什么时机，进行视频自动播放逻辑的触发，不需要是在 scrollViewDidScroll 的时机。</p>
+</blockquote>
+<p>该方法主要逻辑是：</p>
+<p>取出当前可见区域中，满足自动播放条件（func relativeRect(view: UIView, relativeTo scrollView: VideoListPlayable) -&gt; CGRect?）的 cell，即相对位置为滚动列表的 1/3 至 2/3 的位置。</p>
+<p>如果没有满足条件的，则判断当前是否有播放中的视频，且视频即将或已经离开屏幕，有则停止播放视频，并通知 cell。</p>
+<p>如果有满足条件的视频，则根据滚动方向选取视频（列表向上滚动时，播放靠下的视频，反之则播放靠上的视频），移除上一个播放中的视频（通知对应的 cell），切换视频源并播放，通知最新播放的 cell。</p>
+<ol start="4">
+<li><strong>手动播放的处理</strong></li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">play</span><span class="params">(at videoView: VideoPlayable, on scrollView: VideoListPlayable)</span></span> &#123;</span><br><span class="line">    removeCurrentVideo(on: scrollView)</span><br><span class="line">    addPlayerView(to: videoView, on: scrollView)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即移除当前播放中的视频，并将当前手动指定播放的视频进行播放。</p>
+<ol start="5">
+<li><strong>添加视频组件</strong></li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addPlayerView</span><span class="params">(to view: VideoPlayable, on scrollView: VideoListPlayable)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> url = view.urlToPlay <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> avItem = <span class="type">AVPlayerItem</span>(url: url)</span><br><span class="line">    <span class="keyword">let</span> avPlayer = <span class="type">AVPlayer</span>(playerItem: avItem)</span><br><span class="line">    playerVC.player = avPlayer</span><br><span class="line">    avPlayer.isMuted = <span class="literal">true</span></span><br><span class="line">    avPlayer.play()</span><br><span class="line"></span><br><span class="line">    view.videoStatusChanged(changeTo: <span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> containerView = view.viewToContainVideo</span><br><span class="line">    containerView.addSubview(playerVC.view)</span><br><span class="line"></span><br><span class="line">    playerVC.view.translatesAutoresizingMaskIntoConstraints = <span class="literal">false</span></span><br><span class="line">    playerVC.view.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = <span class="literal">true</span></span><br><span class="line">    playerVC.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = <span class="literal">true</span></span><br><span class="line">    playerVC.view.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = <span class="literal">true</span></span><br><span class="line">    playerVC.view.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    currentPlayingView = view</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过协议获取包含视频的 view，将视频放入其中，通知 cell 进行状态变化处理。</p>
+<ol start="6">
+<li>隐藏需求的实现</li>
+</ol>
+<p>基本按照上一个部分讲的思路实现，没有将这部分代码放到 Demo 中。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>目前的方案，cell只需实现协议，添加一个用于包含视频的 view 即可。这样降低了对原代码的侵入性、减少修改和维护的成本，可随时去除该自动播放的特性。另外隐藏需求实际花费的思考和时间会比原始需求多些，需要考虑很多细节。</p>
+<h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><p>本文Demo：<a href="https://github.com/sapphirezzz/VideoListPlayDemo" target="_blank" rel="noopener">VideoListPlayDemo</a></p>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fzackzheng.info" target="_blank" rel="noopener">https://zackzheng.info</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/03/mac-app-drag-and-drop-produce-app-icon/" rel="next" title="手把手教你实现macOS应用文件拖拽进窗口功能-批量生成APP的多尺寸icon实战">
+                <i class="fa fa-chevron-left"></i> 手把手教你实现macOS应用文件拖拽进窗口功能-批量生成APP的多尺寸icon实战
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/25/2020-family/" rel="prev" title="2020年，亲情最浓厚的春节">
+                2020年，亲情最浓厚的春节 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sapphirezzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhengzuanzhe@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方案实现"><span class="nav-number">3.</span> <span class="nav-text">方案实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#原始需求"><span class="nav-number">3.1.</span> <span class="nav-text">原始需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐藏需求"><span class="nav-number">3.2.</span> <span class="nav-text">隐藏需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方案制定"><span class="nav-number">3.3.</span> <span class="nav-text">方案制定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#具体实现"><span class="nav-number">3.4.</span> <span class="nav-text">具体实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附录"><span class="nav-number">5.</span> <span class="nav-text">附录</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.3/jquery.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.ui.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz", "PeIEayFBbCg6sRnLi6yeImgD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
