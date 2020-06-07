@@ -84,14 +84,14 @@
 <meta name="description" content="通过小程序上传接口并发数限制下进行上传的场景，分享 Promise 使用 reduce 实现顺序执行。">
 <meta name="keywords" content="Taro,Promise">
 <meta property="og:type" content="article">
-<meta property="og:title" content="手把手教你Promise小技巧——小程序接口数限制下的顺序执行">
+<meta property="og:title" content="手把手教你Promise小技巧——小程序接口数限制下的并行再顺序执行">
 <meta property="og:url" content="https://zackzheng.info/2020/06/07/use-reduce-to-run-promise-sequentially/index.html">
 <meta property="og:site_name" content="Just My Blog">
 <meta property="og:description" content="通过小程序上传接口并发数限制下进行上传的场景，分享 Promise 使用 reduce 实现顺序执行。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-06-07T10:09:27.590Z">
+<meta property="og:updated_time" content="2020-06-07T10:19:47.440Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="手把手教你Promise小技巧——小程序接口数限制下的顺序执行">
+<meta name="twitter:title" content="手把手教你Promise小技巧——小程序接口数限制下的并行再顺序执行">
 <meta name="twitter:description" content="通过小程序上传接口并发数限制下进行上传的场景，分享 Promise 使用 reduce 实现顺序执行。">
 
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>手把手教你Promise小技巧——小程序接口数限制下的顺序执行 | Just My Blog</title>
+  <title>手把手教你Promise小技巧——小程序接口数限制下的并行再顺序执行 | Just My Blog</title>
   
 
 
@@ -272,7 +272,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">手把手教你Promise小技巧——小程序接口数限制下的顺序执行</h2>
+          <h2 class="post-title" itemprop="name headline">手把手教你Promise小技巧——小程序接口数限制下的并行再顺序执行</h2>
         
 
         <div class="post-meta">
@@ -324,7 +324,7 @@
 
           
           
-             <span id="/2020/06/07/use-reduce-to-run-promise-sequentially/" class="leancloud_visitors" data-flag-title="手把手教你Promise小技巧——小程序接口数限制下的顺序执行">
+             <span id="/2020/06/07/use-reduce-to-run-promise-sequentially/" class="leancloud_visitors" data-flag-title="手把手教你Promise小技巧——小程序接口数限制下的并行再顺序执行">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -360,7 +360,7 @@
 
       
         <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p><code>Promise</code>是一种异步编程的解决方案，在很多语言都有它的实现，笔者一直喜欢使用它去解决各种问题，简洁高效。</p>
-<p><code>ECMAscript 6</code>原生提供了<code>Promise</code>对象。本文通过小程序上传接口并发数限制下进行上传的场景，分享<code>Promise</code>顺序执行的一种实现。</p>
+<p><code>ECMAscript 6</code>原生提供了<code>Promise</code>对象。本文通过小程序上传接口并发数限制下进行上传的场景，实现图片并行再串行上传，分享<code>Promise</code>顺序执行的一种实现。</p>
 <h1 id="二、实现讲解"><a href="#二、实现讲解" class="headerlink" title="二、实现讲解"></a>二、实现讲解</h1><p>在<a href="https://developers.weixin.qq.com/miniprogram/dev/framework/ability/network.html" target="_blank" rel="noopener">微信官方文档·小程序-网络使用说明</a>中，对<code>wx.request</code>、<code>wx.uploadFile</code>、<code>wx.downloadFile</code>的最大并发限制是 <strong>10</strong> 个。因此当遇到一个页面需要上传超过10个文件时，无法使用<code>Promise</code>并发调用上传接口。</p>
 <p>比如页面有两个产品元素，一个元素需要上传5张照片，一个元素需要上传8张照片。此时我们操作后得到两个数组，一个包含5个上传的<code>Promise</code>，一个包含8个上传的<code>Promise</code>。我们可以数组内并行发起，数组间则顺序执行。</p>
 <p>这样得到的逻辑就是，先并行上传第一个元素的5张照片，上传完再并行上传第二个元素的8张照片。（当然也可以将所有的上传按10个分批再顺序执行）</p>
