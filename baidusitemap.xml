@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://zackzheng.info/2019/08/27/resolve-image-width-in-richtext/</loc>
+    <lastmod>2020-06-07</lastmod>
+  </url>  <url>
     <loc>https://zackzheng.info/2020/06/07/use-reduce-to-run-promise-sequentially/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
@@ -19,13 +22,13 @@
     <loc>https://zackzheng.info/2019/04/24/create-xcode-plug-in-by-source-editor-extension/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
+    <loc>https://zackzheng.info/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/</loc>
+    <lastmod>2020-06-07</lastmod>
+  </url>  <url>
     <loc>https://zackzheng.info/2016/10/26/config-different-ssh-key-for-multiple-git-accounts/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2017/11/14/swift-code-conventions/</loc>
-    <lastmod>2020-06-07</lastmod>
-  </url>  <url>
-    <loc>https://zackzheng.info/2016/10/14/publish-new-or-updated-libraries-to-CocoaPods/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2018/02/07/ios-device-model-identifier/</loc>
@@ -43,10 +46,10 @@
     <loc>https://zackzheng.info/2016/03/06/migrate-to-hexo-from-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2016/05/31/ios-in-app-purchase-iap/</loc>
+    <loc>https://zackzheng.info/2016/04/24/handle-collectionview-tableview-with-grace/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2016/04/24/handle-collectionview-tableview-with-grace/</loc>
+    <loc>https://zackzheng.info/2016/05/31/ios-in-app-purchase-iap/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2016/01/17/ios-devices-info/</loc>
@@ -58,10 +61,10 @@
     <loc>https://zackzheng.info/2016/02/26/app-image-compress-upload-to-server/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/09/14/going-hiking-through-the-tung-west-chung-coast/</loc>
+    <loc>https://zackzheng.info/2015/07/23/the-most-normal-but-warm-moment/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/07/23/the-most-normal-but-warm-moment/</loc>
+    <loc>https://zackzheng.info/2015/09/14/going-hiking-through-the-tung-west-chung-coast/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/09/29/adapt-to-xcode-7-and-ios-9/</loc>
@@ -73,22 +76,22 @@
     <loc>https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
+    <loc>https://zackzheng.info/2015/06/07/add-category-to-octopress/</loc>
+    <lastmod>2020-06-07</lastmod>
+  </url>  <url>
     <loc>https://zackzheng.info/2015/06/07/github-pages-ruby-markdown-jekyll-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/07/make-visit-faster/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/07/add-category-to-octopress/</loc>
-    <lastmod>2020-06-07</lastmod>
-  </url>  <url>
     <loc>https://zackzheng.info/2015/06/07/new-a-page-on-navigation/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/07/sitemap-of-your-octopress-blog/</loc>
+    <loc>https://zackzheng.info/2015/06/07/seo-about-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/07/seo-about-octopress/</loc>
+    <loc>https://zackzheng.info/2015/06/07/sitemap-of-your-octopress-blog/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/03/07/share-some-experience-in-using-git-in-my-project/</loc>
@@ -97,10 +100,10 @@
     <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
+    <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
+    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/06/use-code-block-without-analysis/</loc>
@@ -109,10 +112,10 @@
     <loc>https://zackzheng.info/2015/02/22/scroll-to-top-for-my-octopress-blog/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
+    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
+    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>
 </urlset>
