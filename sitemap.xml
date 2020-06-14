@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://zackzheng.info/2020/06/14/taro-to-react-native/</loc>
+    
+    <lastmod>2020-06-14T14:12:26.760Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://zackzheng.info/2019/08/27/resolve-image-width-in-richtext/</loc>
     
     <lastmod>2020-06-07T10:39:28.614Z</lastmod>
@@ -79,14 +86,14 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2017/11/14/swift-code-conventions/</loc>
+    <loc>https://zackzheng.info/2018/02/07/ios-device-model-identifier/</loc>
     
     <lastmod>2020-06-07T10:06:47.831Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2018/02/07/ios-device-model-identifier/</loc>
+    <loc>https://zackzheng.info/2017/11/14/swift-code-conventions/</loc>
     
     <lastmod>2020-06-07T10:06:47.831Z</lastmod>
     
@@ -198,13 +205,6 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/06/07/make-visit-faster/</loc>
-    
-    <lastmod>2020-06-07T10:06:47.814Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://zackzheng.info/2015/06/07/github-pages-ruby-markdown-jekyll-octopress/</loc>
     
     <lastmod>2020-06-07T10:06:47.814Z</lastmod>
@@ -212,7 +212,7 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/06/07/new-a-page-on-navigation/</loc>
+    <loc>https://zackzheng.info/2015/06/07/make-visit-faster/</loc>
     
     <lastmod>2020-06-07T10:06:47.814Z</lastmod>
     
@@ -220,6 +220,13 @@
   
   <url>
     <loc>https://zackzheng.info/2015/06/07/seo-about-octopress/</loc>
+    
+    <lastmod>2020-06-07T10:06:47.814Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://zackzheng.info/2015/06/07/new-a-page-on-navigation/</loc>
     
     <lastmod>2020-06-07T10:06:47.814Z</lastmod>
     
@@ -240,7 +247,7 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
+    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
     
     <lastmod>2020-06-07T10:06:47.813Z</lastmod>
     
@@ -254,7 +261,7 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
+    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
     
     <lastmod>2020-06-07T10:06:47.813Z</lastmod>
     
@@ -275,14 +282,14 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
+    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
     
     <lastmod>2020-06-07T10:06:47.812Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
+    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
     
     <lastmod>2020-06-07T10:06:47.812Z</lastmod>
     

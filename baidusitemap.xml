@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://zackzheng.info/2020/06/14/taro-to-react-native/</loc>
+    <lastmod>2020-06-14</lastmod>
+  </url>  <url>
     <loc>https://zackzheng.info/2019/08/27/resolve-image-width-in-richtext/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
@@ -28,10 +31,10 @@
     <loc>https://zackzheng.info/2016/10/26/config-different-ssh-key-for-multiple-git-accounts/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2017/11/14/swift-code-conventions/</loc>
+    <loc>https://zackzheng.info/2018/02/07/ios-device-model-identifier/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2018/02/07/ios-device-model-identifier/</loc>
+    <loc>https://zackzheng.info/2017/11/14/swift-code-conventions/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2016/07/24/shell-keng/</loc>
@@ -79,16 +82,16 @@
     <loc>https://zackzheng.info/2015/06/07/add-category-to-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/07/make-visit-faster/</loc>
-    <lastmod>2020-06-07</lastmod>
-  </url>  <url>
     <loc>https://zackzheng.info/2015/06/07/github-pages-ruby-markdown-jekyll-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/07/new-a-page-on-navigation/</loc>
+    <loc>https://zackzheng.info/2015/06/07/make-visit-faster/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/07/seo-about-octopress/</loc>
+    <lastmod>2020-06-07</lastmod>
+  </url>  <url>
+    <loc>https://zackzheng.info/2015/06/07/new-a-page-on-navigation/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/07/sitemap-of-your-octopress-blog/</loc>
@@ -97,13 +100,13 @@
     <loc>https://zackzheng.info/2015/03/07/share-some-experience-in-using-git-in-my-project/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
+    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
+    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/06/use-code-block-without-analysis/</loc>
@@ -112,10 +115,10 @@
     <loc>https://zackzheng.info/2015/02/22/scroll-to-top-for-my-octopress-blog/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
+    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
+    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>
 </urlset>
