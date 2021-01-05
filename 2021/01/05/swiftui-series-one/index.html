@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+  
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.JPG?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.JPG?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.JPG?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="SwiftUI,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="手把手教你深入玩转SwiftUI系列开篇">
+<meta name="keywords" content="SwiftUI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手把手教你深入玩转SwiftUI（1）">
+<meta property="og:url" content="https://zackzheng.info/2021/01/05/swiftui-series-one/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="手把手教你深入玩转SwiftUI系列开篇">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zackzheng.info/2021/01/05/swiftui-series-one/demo-screen-shot.jpg">
+<meta property="og:updated_time" content="2021-01-05T13:28:18.507Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="手把手教你深入玩转SwiftUI（1）">
+<meta name="twitter:description" content="手把手教你深入玩转SwiftUI系列开篇">
+<meta name="twitter:image" content="https://zackzheng.info/2021/01/05/swiftui-series-one/demo-screen-shot.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zackzheng.info/2021/01/05/swiftui-series-one/">
+
+
+
+
+
+  <title>手把手教你深入玩转SwiftUI（1） | Just My Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2021/01/05/swiftui-series-one/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">手把手教你深入玩转SwiftUI（1）</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-05T22:00:00+08:00">
+                2021-01-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tech/" itemprop="url" rel="index">
+                    <span itemprop="name">Tech</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2021/01/05/swiftui-series-one/" class="leancloud_visitors" data-flag-title="手把手教你深入玩转SwiftUI（1）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  手把手教你深入玩转SwiftUI系列开篇
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><code>Swift</code>是世界上最好的语言！</p>
+</blockquote>
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>作为一个使用 Swift 已经六年的程序猿，SwiftUI 已经发布一年多了，最近才终于有时间实践了一番。决定写写这个系列，这是仅次于 Swift 的另一重要发布，下一代的客户端 UI 开发技术，刚好前段时间有个产品经理的朋友说想学。</p>
+<p>除了分享基础知识，还会讲解深层次的<strong>要点精髓</strong>。<strong>这才是学习的重点。</strong></p>
+<p>从苹果的官方的教程开始。这教程非常给力，交互非常好，例子简练精要，可以感受到<code>SwiftUI</code>受到多大的重视。</p>
+<blockquote>
+<p>本文中的例子来自文末附录带的苹果官方 Demo</p>
+</blockquote>
+<h1 id="二、声明式-UI-编程"><a href="#二、声明式-UI-编程" class="headerlink" title="二、声明式 UI 编程"></a>二、声明式 UI 编程</h1><p>相信很多写过 React 的原生同学会有个比较深的感受，界面开发起来很方便，那是因为，人家已经是“<strong>声明式编程</strong>”了。iOS 还在用着 UIKit 和 Storyboard 繁琐地写着描述式 UI 和设置约束。</p>
+<p>同时 React 的<em>状态管理</em>和<em>数据绑定</em>也极大地刺激着我们。在Controller、View 和 Model 间来回转悠的我们早已疲乏，项目越来越需要花精力重构，增大维护成本。虽然也有些办法处理，但去不到根源。</p>
+<p>不可否认 UIKit 曾经作出巨大贡献，降低了我们的学习曲线，但终究是要被替代的，就像 Swift 替代 OC，只是时间问题。</p>
+<p><code>SwiftUI</code>是新一代界面编程思想——声明式编程，本质是一套<code>DSL</code>。网上有很多介绍，在此就不赘述了。</p>
+<h1 id="三、课程拆解"><a href="#三、课程拆解" class="headerlink" title="三、课程拆解"></a>三、课程拆解</h1><p>官方教程这一篇分六个 Section，主要讲解几个点：</p>
+<ol>
+<li>创建 SwiftUI 项目</li>
+<li>使用 SwiftUI 预览功能</li>
+<li>自定义组件</li>
+<li>使用 Text、Image、VStack、HStack、Spacer 等 UI 组件</li>
+<li>使用其他库的组件</li>
+</ol>
+<p>下面主要从一个个文件的角度来拆解要点和各种新特性。</p>
+<h2 id="创建-SwiftUI-项目"><a href="#创建-SwiftUI-项目" class="headerlink" title="创建 SwiftUI 项目"></a>创建 SwiftUI 项目</h2><ul>
+<li>打开 Xcode -&gt; File -&gt; New -&gt; Project…</li>
+<li>弹窗 App<br>-&gt; Next<br>-&gt; 填写 Product Name（项目名），如 LandmarksApp<br>-&gt; Interface 选择 SwiftUI<br>-&gt; Life Cycle 选择 SwiftUI App<br>-&gt; 选择存放的目录 Create</li>
+</ul>
+<h2 id="LandmarksApp-swift"><a href="#LandmarksApp-swift" class="headerlink" title="LandmarksApp.swift"></a>LandmarksApp.swift</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import SwiftUI</span><br><span class="line"></span><br><span class="line">@main</span><br><span class="line">struct LandmarksApp: App &#123;</span><br><span class="line">    var body: some Scene &#123;</span><br><span class="line">        WindowGroup &#123;</span><br><span class="line">            ContentView()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>SwiftUI<br>这里<code>import</code>了一个新的库<code>SwiftUI</code>，包含以前常用的 UI 库，并新定义了一些 UI 相关的类。其中最重要的是<code>Combine</code>，后面会简单说到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import Combine</span><br><span class="line">import CoreData</span><br><span class="line">import CoreFoundation</span><br><span class="line">import CoreGraphics</span><br><span class="line">import Darwin</span><br><span class="line">import DeveloperToolsSupport</span><br><span class="line">import Foundation</span><br><span class="line">import SwiftUI</span><br><span class="line">import UIKit</span><br><span class="line">import UniformTypeIdentifiers</span><br><span class="line">import os.log</span><br><span class="line">import os</span><br><span class="line">import os.signpost</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>View</p>
+</li>
+</ul>
+<p>SwiftUI 库中定义了<code>View</code>，可以看到是个协议，定义了屏幕上一个元素符合的条件。自定义新的 UI 类只要遵循这个协议，就可以被展示。这种设计比以前的<code>UIView</code>作为 UI 父类更轻便。</p>
+<p>而且它的<code>body</code>属性本质也是<code>View</code>，这种设计是<code>SwiftUI</code>的精髓，下面会讲到。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public protocol View &#123;</span><br><span class="line"></span><br><span class="line">    /// The type of view representing the body of this view.</span><br><span class="line">    ///</span><br><span class="line">    /// When you create a custom view, Swift infers this type from your</span><br><span class="line">    /// implementation of the required `body` property.</span><br><span class="line">    associatedtype Body : View</span><br><span class="line"></span><br><span class="line">    /// The content and behavior of the view.</span><br><span class="line">    @ViewBuilder var body: Self.Body &#123; get &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>修饰词<code>@main</code></li>
+</ul>
+<p>这里提供了程序的启动入口。</p>
+<p>使用 SwiftUI 的应用的生命周期需要符合<code>App</code>协议，当前是定义了一个结构体类型，叫<code>SwiftUIDemoApp</code>，遵循了<code>App</code>协议。使用类遵循协议也可以，不一定要结构体。</p>
+<ul>
+<li>关键字<code>some</code></li>
+</ul>
+<p>这里使用<code>some</code>返回了一个<a href="https://github.com/apple/swift-evolution/blob/master/proposals/0244-opaque-result-types.md" target="_blank" rel="noopener">Opaque Result Type</a>（反向泛型类型，也称不透明结果类型）。反向泛型类型的类型参数，是由实现指定并隐藏起来的，一般的泛型是由使用者指定的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct ContentView: View &#123;</span><br><span class="line">    var body: some View &#123;</span><br><span class="line">        VStack &#123;</span><br><span class="line">            Text(&quot;Hello Zack !&quot;)</span><br><span class="line">            Image(&quot;zack-avatar&quot;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>比如上面的代码，实际上返回的类型是<code>VStack&lt;TupleView&lt;(Text, Image)&gt;&gt;</code>，由系统自行推断。我们可以任意组合 UI 组件内部的实现（包括运行时的变动），不用去指明具体类型，节省了非常多的工作量。</p>
+<p>Swift 泛型系统长期存在一个问题是，带有 associatedtype 的协议不能作为类型使用，只能作为类型约束使用，无法作为函数的返回参数。而<code>Some</code>的设计，使这个问题得到解决。</p>
+<p><strong>因此可以看出，正是<code>View</code>的递归设计和<code>Some</code>的隐藏特性，支撑了<code>SwiftUI</code>的声明式以及高度可组合，这是它的精髓！</strong></p>
+<h2 id="CircleImage-swift"><a href="#CircleImage-swift" class="headerlink" title="CircleImage.swift"></a>CircleImage.swift</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import SwiftUI</span><br><span class="line"></span><br><span class="line">struct CircleImage: View &#123;</span><br><span class="line">    var body: some View &#123;</span><br><span class="line">        Image(&quot;zackzheng&quot;)</span><br><span class="line">            .clipShape(Circle())</span><br><span class="line">            .overlay(Circle().stroke(Color.white, lineWidth: 4))</span><br><span class="line">            .shadow(radius: 7)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct CircleImage_Previews: PreviewProvider &#123;</span><br><span class="line">    static var previews: some View &#123;</span><br><span class="line">        CircleImage()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Image</li>
+</ul>
+<p>使用<code>Image</code>组件展示图片，只需在<code>Assets.xcassets</code>中添加素材，再用素材名称初始化即可，比起以前方便一点。</p>
+<ul>
+<li>链式调用</li>
+</ul>
+<p>这里定义了一个结构体<code>CircleImage</code>。<code>body</code>需要返回遵循<code>View</code>协议的类型，因此可以推测<code>.clipShape</code>、<code>.overlay</code>、<code>.shadow</code>几个链式调用上的方法返回的都是<code>View</code>，查看定义可验证。</p>
+<p>这里几个方法从命名得知是形状修剪、覆盖边框、阴影等，不需赘述。</p>
+<p><strong><code>链式调用</code>的设计也为声明式提供了简化和灵活度，不用如 React 一样将所有属性都配置。</strong></p>
+<ul>
+<li>PreviewProvider</li>
+</ul>
+<p>A type that produces view previews in Xcode.</p>
+<p>这是用于实现<code>SwiftUI</code>在 Xcode 中的实时预览特性，在 Xcode 默认是界面右侧可以看到（点击右侧上方的 Resume，或者在菜单 Editor &gt; Canvas 打开）。</p>
+<p>Amazing！做过前端开发的原生同学，都羡慕解释型语言的这个特点，虽然之前 Swift Playground 已经可以实时运行结果，但这次是 UI 啊！对标 Weex 或 React Native 的 Hot Reloading。</p>
+<p>这里只是支持 Xcode 预览，所以这部分代码并不是必须的。<br>每个<code>.swift</code>文件可以写多个，预览会纵向排列。另外<code>previews</code>属性实际上可以任意返回，即使不是你当前新自定义的类。</p>
+<blockquote>
+<p>系统需要升级到 11.x macOS Big Sur<br>使用搭载有 SwiftUI.framework 的 macOS 10.15 才能够看到预览</p>
+</blockquote>
+<ul>
+<li>修改组件属性</li>
+</ul>
+<p>在预览处处于 Preview 状态下，command + 点击组件，会弹出菜单，点击“Show SwiftUI Inspector”，就可以对组件属性进行修改。</p>
+<h2 id="MapView-swift"><a href="#MapView-swift" class="headerlink" title="MapView.swift"></a>MapView.swift</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import SwiftUI</span><br><span class="line">import MapKit</span><br><span class="line"></span><br><span class="line">struct MapView: View &#123;</span><br><span class="line">    @State private var region = MKCoordinateRegion(</span><br><span class="line">        center: CLLocationCoordinate2D(latitude: 34.011_286, longitude: -116.166_868),</span><br><span class="line">        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    var body: some View &#123;</span><br><span class="line">        Map(coordinateRegion: $region)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct MapView_Previews: PreviewProvider &#123;</span><br><span class="line">    static var previews: some View &#123;</span><br><span class="line">        MapView()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里介绍了引用其他库的组件，MapKit 库中的<code>Map</code>组件。</p>
+<ul>
+<li><code>@State</code></li>
+</ul>
+<p>@State 是属性修饰词。</p>
+<blockquote>
+<p>SwiftUI 将会把使用过<code>@State</code>修饰器的属性存储到一个特殊的内存区域，并且这个区域和 View struct 是隔离的. 当<code>@State</code>装饰过的属性发生了变化，SwiftUI 会根据新的属性值重新创建视图。</p>
+</blockquote>
+<p>当我们需要属性变化时，界面就自动刷新，则需要给属性添加<code>@State</code>修饰，类似于Vue和React中的State。以后不需要通过<code>didSet</code>来实现类似功能。</p>
+<ul>
+<li>@Binding</li>
+</ul>
+<p>在 Swift 中基础属性变量的传递形式是值类型传递，不是引用传递。通过在变量前面添加<code>$</code>，可以变成引用传递，如代码中的<code>$region</code>。这样当 region 变化时，由于<code>@State</code>的关系，界面会重新渲染，Map 组件就会接收到属性的新值。</p>
+<p>**所以这两个装饰器结合使用，达到通过属性重新渲染子组件的目的。</p>
+<p>监听和渲染底层是通过<code>Combine</code>实现，可以看到下面 View 的 extension，这里不展开讲。**</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)</span><br><span class="line">extension View &#123;</span><br><span class="line"></span><br><span class="line">    /// Adds an action to perform when this view detects data emitted by the</span><br><span class="line">    /// given publisher.</span><br><span class="line">    ///</span><br><span class="line">    /// - Parameters:</span><br><span class="line">    ///   - publisher: The publisher to subscribe to.</span><br><span class="line">    ///   - action: The action to perform when an event is emitted by</span><br><span class="line">    ///     `publisher`. The event emitted by publisher is passed as a</span><br><span class="line">    ///     parameter to `action`.</span><br><span class="line">    ///</span><br><span class="line">    /// - Returns: A view that triggers `action` when `publisher` emits an</span><br><span class="line">    ///   event.</span><br><span class="line">    @inlinable public func onReceive&lt;P&gt;(_ publisher: P, perform action: @escaping (P.Output) -&gt; Void) -&gt; some View where P : Publisher, P.Failure == Never</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ContentView-swift"><a href="#ContentView-swift" class="headerlink" title="ContentView.swift"></a>ContentView.swift</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">struct ContentView: View &#123;</span><br><span class="line">    var body: some View &#123;</span><br><span class="line">        VStack &#123;</span><br><span class="line">            MapView()</span><br><span class="line">                .ignoresSafeArea(edges: .top)</span><br><span class="line">                .frame(height: 300)</span><br><span class="line"></span><br><span class="line">            CircleImage()</span><br><span class="line">                .offset(y: -130)</span><br><span class="line">                .padding(.bottom, -130)</span><br><span class="line"></span><br><span class="line">            VStack(alignment: .leading) &#123;</span><br><span class="line">                Text(&quot;Turtle Rock&quot;)</span><br><span class="line">                    .font(.title)</span><br><span class="line"></span><br><span class="line">                HStack &#123;</span><br><span class="line">                    Text(&quot;Joshua Tree National Park&quot;)</span><br><span class="line">                    Spacer()</span><br><span class="line">                    Text(&quot;California&quot;)</span><br><span class="line">                &#125;</span><br><span class="line">                .font(.subheadline)</span><br><span class="line">                .foregroundColor(.secondary)</span><br><span class="line"></span><br><span class="line">                Divider()</span><br><span class="line"></span><br><span class="line">                Text(&quot;About Turtle Rock&quot;)</span><br><span class="line">                    .font(.title2)</span><br><span class="line">                Text(&quot;Descriptive text goes here.&quot;)</span><br><span class="line">            &#125;</span><br><span class="line">            .padding()</span><br><span class="line"></span><br><span class="line">            Spacer()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>VStack、HStack</li>
+</ul>
+<p>这两个组件其实就是<code>UIStackView</code>的 SwiftUI 版本，<code>VStack</code>是子组件纵向排列，<code>HStack</code>是横向排列，都可以分别设置两个方向上的排列对齐方式。</p>
+<p>相信用过 UIStackView 的同学都十分喜爱它，小编也用到爱不释手，并且逐渐替代了很多 UI 布局场景，广泛使用，放弃了麻烦的<code>NSLayoutConstraint</code>。</p>
+<p>它们的初始化方式很有意思，放几个组件就可以了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)</span><br><span class="line">@frozen public struct VStack&lt;Content&gt; : View where Content : View &#123;</span><br><span class="line"></span><br><span class="line">    /// Creates an instance with the given spacing and horizontal alignment.</span><br><span class="line">    ///</span><br><span class="line">    /// - Parameters:</span><br><span class="line">    ///   - alignment: The guide for aligning the subviews in this stack. This</span><br><span class="line">    ///     guide has the same vertical screen coordinate for every child view.</span><br><span class="line">    ///   - spacing: The distance between adjacent subviews, or `nil` if you</span><br><span class="line">    ///     want the stack to choose a default distance for each pair of</span><br><span class="line">    ///     subviews.</span><br><span class="line">    ///   - content: A view builder that creates the content of this stack.</span><br><span class="line">    @inlinable public init(alignment: HorizontalAlignment = .center, spacing: CGFloat? = nil, @ViewBuilder content: () -&gt; Content)</span><br><span class="line"></span><br><span class="line">    /// The type of view representing the body of this view.</span><br><span class="line">    ///</span><br><span class="line">    /// When you create a custom view, Swift infers this type from your</span><br><span class="line">    /// implementation of the required `body` property.</span><br><span class="line">    public typealias Body = Never</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，实际上要求的是<code>Content</code>类型。有兴趣可以自行查阅<a href="https://github.com/apple/swift-evolution/blob/9992cf3c11c2d5e0ea20bee98657d93902d5b174/proposals/XXXX-function-builders.md" target="_blank" rel="noopener">Funtion builders</a>了解，我就不说了。</p>
+<p><strong>从 Demo 也可以看出，这两个组件会成为以后 SwiftUI 布局的基础组件。配合 offset 和 padding 成为主要的布局配合。</strong>需要抛弃掉传统的依赖<code>NSLayoutConstraint</code>布局的惯性思维。所以小编适应起来挺快的。</p>
+<ul>
+<li>.ignoresSafeArea(edges: .top)</li>
+</ul>
+<p>处于页面顶部安全区内的组件，通过<code>ignoresSafeArea</code>进行适配，具体就不作介绍。</p>
+<ul>
+<li>offset、padding</li>
+</ul>
+<p>这两个方法可以改改 Demo ，就能看出区别了。<br>在 VStack、HStack 下，<code>offset</code>相当于改变<code>bounds</code>，不会改变<code>frame</code>。而<code>padding</code>相反，会改变<code>frame</code>，不会改变<code>bounds</code>。</p>
+<ul>
+<li><code>Bool</code> 的 <code>toggle()</code></li>
+</ul>
+<p>今天还看到<code>Struct</code>类型<code>Bool</code>有个<code>mutating</code>方法<code>toggle</code>，作用就是将<code>true</code>变为<code>false</code>，或者将<code>false</code>变为<code>true</code>。</p>
+<p><code>mutating</code>大家应该都很熟悉了，就是<code>Struct</code>用于修改自身属性的方法定义。所以这个方法很实用，比以前写<code>A = !A</code>感觉自然多了。</p>
+<blockquote>
+<p>Swift 新手概念：生命周期、协议、结构体、类、范型、import、Safe Area(安全区) 、bounds、frame、mutating</p>
+</blockquote>
+<h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h1><p>从上我们可以总结出几点：</p>
+<ol>
+<li>协议在<code>SwiftUI</code>的整体设计上发挥了巨大的作用</li>
+<li><code>SwiftUI</code>完美满足 UI 快速实时预览的需求</li>
+<li><code>@Binding</code>和<code>@State</code>实现了数据流层面的界面状态绑定</li>
+<li><code>some</code>实现的<code>Opaque Result Types</code>解决了范型存在已久的问题，为更好的设计方式提供了途径</li>
+<li><code>VStack</code>、<code>HStack</code>、<code>offset</code>、<code>padding</code>将构成<code>SwiftUI</code>布局的基础，替代繁琐的<code>NSLayoutConstraint</code></li>
+<li>链式调用的设计简化了声明式的灵活实现</li>
+<li><strong><code>View</code>的递归设计和<code>some</code>的隐藏特性，支撑了<code>SwiftUI</code>的声明式以及高度可组合特性，这是它的精髓</strong></li>
+<li>声明式和数据绑定的特性，极大地提高我们的效率，降低犯错几率、减少维护成本。</li>
+</ol>
+<p>总而言之，<code>SwiftUI</code>，非常优秀！</p>
+<h1 id="五、附录"><a href="#五、附录" class="headerlink" title="五、附录"></a>五、附录</h1><blockquote>
+<p><a href="https://developer.apple.com/tutorials/swiftui" target="_blank" rel="noopener">SwiftUI Tutorials</a><br><a href="https://developer.apple.com/tutorials/swiftui/creating-and-combining-views" target="_blank" rel="noopener">SwiftUI Tutorials/Creating and Combining Views</a><br><a href="https://docs-assets.developer.apple.com/published/0ae7c8698688ae31636dedfd79a6153a/5200/CreatingAndCombiningViews.zip" target="_blank" rel="noopener">官方 Demo —— Project files</a></p>
+</blockquote>
+<p><img src="/2021/01/05/swiftui-series-one/demo-screen-shot.jpg" alt="代码运行效果"></p>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://zackzheng.info">https://zackzheng.info</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SwiftUI/" rel="tag"># SwiftUI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/02/financial-summary-of-2020/" rel="next" title="2020财务小结及理财心得分享">
+                <i class="fa fa-chevron-left"></i> 2020财务小结及理财心得分享
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sapphirezzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhengzuanzhe@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、声明式-UI-编程"><span class="nav-number">2.</span> <span class="nav-text">二、声明式 UI 编程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、课程拆解"><span class="nav-number">3.</span> <span class="nav-text">三、课程拆解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建-SwiftUI-项目"><span class="nav-number">3.1.</span> <span class="nav-text">创建 SwiftUI 项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LandmarksApp-swift"><span class="nav-number">3.2.</span> <span class="nav-text">LandmarksApp.swift</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CircleImage-swift"><span class="nav-number">3.3.</span> <span class="nav-text">CircleImage.swift</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapView-swift"><span class="nav-number">3.4.</span> <span class="nav-text">MapView.swift</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ContentView-swift"><span class="nav-number">3.5.</span> <span class="nav-text">ContentView.swift</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、总结"><span class="nav-number">4.</span> <span class="nav-text">四、总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、附录"><span class="nav-number">5.</span> <span class="nav-text">五、附录</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.3/jquery.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.ui.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz", "PeIEayFBbCg6sRnLi6yeImgD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
