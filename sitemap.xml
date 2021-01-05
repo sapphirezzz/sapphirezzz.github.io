@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://zackzheng.info/2021/01/05/financial-summary-of-2020/</loc>
+    
+    <lastmod>2021-01-05T12:58:09.956Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://zackzheng.info/2020/06/14/taro-to-react-native/</loc>
     
-    <lastmod>2020-06-14T14:12:26.760Z</lastmod>
+    <lastmod>2020-06-14T14:14:22.393Z</lastmod>
     
   </url>
   
@@ -212,6 +219,13 @@
   </url>
   
   <url>
+    <loc>https://zackzheng.info/2015/06/07/new-a-page-on-navigation/</loc>
+    
+    <lastmod>2020-06-07T10:06:47.814Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://zackzheng.info/2015/06/07/make-visit-faster/</loc>
     
     <lastmod>2020-06-07T10:06:47.814Z</lastmod>
@@ -220,13 +234,6 @@
   
   <url>
     <loc>https://zackzheng.info/2015/06/07/seo-about-octopress/</loc>
-    
-    <lastmod>2020-06-07T10:06:47.814Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://zackzheng.info/2015/06/07/new-a-page-on-navigation/</loc>
     
     <lastmod>2020-06-07T10:06:47.814Z</lastmod>
     
@@ -247,13 +254,6 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
-    
-    <lastmod>2020-06-07T10:06:47.813Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
     
     <lastmod>2020-06-07T10:06:47.813Z</lastmod>
@@ -262,6 +262,13 @@
   
   <url>
     <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
+    
+    <lastmod>2020-06-07T10:06:47.813Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://zackzheng.info/2015/06/01/add-visitors-counter-to-octopress/</loc>
     
     <lastmod>2020-06-07T10:06:47.813Z</lastmod>
     
