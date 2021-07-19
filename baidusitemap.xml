@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://zackzheng.info/2021/07/19/swift-script-for-change-app-icon/</loc>
+    <loc>https://zackzheng.info/2021/07/14/swift-script-for-change-app-icon/</loc>
     <lastmod>2021-07-19</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2021/01/05/swiftui-series-one/</loc>
@@ -82,10 +82,10 @@
     <loc>https://zackzheng.info/2015/09/29/adapt-to-xcode-7-and-ios-9/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/</loc>
+    <loc>https://zackzheng.info/2015/12/05/review-of-the-devil's-advocate/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/12/05/review-of-the-devil's-advocate/</loc>
+    <loc>https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
     <loc>https://zackzheng.info/2015/06/07/add-category-to-octopress/</loc>
@@ -109,6 +109,9 @@
     <loc>https://zackzheng.info/2015/03/07/share-some-experience-in-using-git-in-my-project/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
+    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
+    <lastmod>2020-06-07</lastmod>
+  </url>  <url>
     <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
@@ -118,16 +121,13 @@
     <loc>https://zackzheng.info/2015/06/06/use-code-block-without-analysis/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
-    <lastmod>2020-06-07</lastmod>
-  </url>  <url>
     <loc>https://zackzheng.info/2015/02/22/scroll-to-top-for-my-octopress-blog/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
+    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>  <url>
-    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
+    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
     <lastmod>2020-06-07</lastmod>
   </url>
 </urlset>

@@ -2,9 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://zackzheng.info/2021/07/19/swift-script-for-change-app-icon/</loc>
+    <loc>https://zackzheng.info/2021/07/14/swift-script-for-change-app-icon/</loc>
     
-    <lastmod>2021-07-19T13:00:16.114Z</lastmod>
+    <lastmod>2021-07-19T13:12:15.006Z</lastmod>
     
   </url>
   
@@ -205,14 +205,14 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/</loc>
+    <loc>https://zackzheng.info/2015/12/05/review-of-the-devil's-advocate/</loc>
     
     <lastmod>2020-06-07T10:06:47.815Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/12/05/review-of-the-devil's-advocate/</loc>
+    <loc>https://zackzheng.info/2015/12/27/an-automated-script-for-building-archiving-submission-sending-emails/</loc>
     
     <lastmod>2020-06-07T10:06:47.815Z</lastmod>
     
@@ -268,6 +268,13 @@
   </url>
   
   <url>
+    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
+    
+    <lastmod>2020-06-07T10:06:47.813Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://zackzheng.info/2015/06/01/add-comment-component-to-octopress/</loc>
     
     <lastmod>2020-06-07T10:06:47.813Z</lastmod>
@@ -289,13 +296,6 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/03/16/happiness-which-has-gone/</loc>
-    
-    <lastmod>2020-06-07T10:06:47.813Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://zackzheng.info/2015/02/22/scroll-to-top-for-my-octopress-blog/</loc>
     
     <lastmod>2020-06-07T10:06:47.812Z</lastmod>
@@ -303,14 +303,14 @@
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
+    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
     
     <lastmod>2020-06-07T10:06:47.812Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://zackzheng.info/2015/02/22/start-a-blog-on-github-pages-base-on-octopress/</loc>
+    <loc>https://zackzheng.info/2015/02/22/show-summary-of-post/</loc>
     
     <lastmod>2020-06-07T10:06:47.812Z</lastmod>
     
