@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+  
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.JPG?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.JPG?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.JPG?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Taro,React-Native,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="通过实践分享Taro转React-Native遇到的问题，以及相关的思考">
+<meta name="keywords" content="Taro,React-Native">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Taro转React-Native的实践总结和分析思考">
+<meta property="og:url" content="https://zackzheng.info/2020/06/14/taro-to-react-native/index.html">
+<meta property="og:site_name" content="Just My Blog">
+<meta property="og:description" content="通过实践分享Taro转React-Native遇到的问题，以及相关的思考">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-06-14T14:14:22.393Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Taro转React-Native的实践总结和分析思考">
+<meta name="twitter:description" content="通过实践分享Taro转React-Native遇到的问题，以及相关的思考">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zackzheng.info/2020/06/14/taro-to-react-native/">
+
+
+
+
+
+  <title>Taro转React-Native的实践总结和分析思考 | Just My Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just My Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">A Programmer Wants To Be A Poet.尘世间一件迷途小码农</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zackzheng.info/2020/06/14/taro-to-react-native/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zack Zheng">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just My Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Taro转React-Native的实践总结和分析思考</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T22:00:00+08:00">
+                2020-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tech/" itemprop="url" rel="index">
+                    <span itemprop="name">Tech</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/06/14/taro-to-react-native/" class="leancloud_visitors" data-flag-title="Taro转React-Native的实践总结和分析思考">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  通过实践分享Taro转React-Native遇到的问题，以及相关的思考
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><blockquote>
+<p><strong>Taro</strong> 是一套遵循 <a href="https://reactjs.org/" target="_blank" rel="noopener">React</a> 语法规范的 <strong>多端开发</strong> 解决方案。</p>
+<p>使用 <strong>Taro</strong>，我们可以只书写一套代码，再通过 <strong>Taro</strong> 的编译工具，将源代码分别编译出可以在不同端（微信/百度/支付宝/字节跳动/QQ/京东小程序、快应用、H5、React-Native 等）运行的代码。</p>
+<p>*摘自<a href="https://taro-docs.jd.com/taro/docs/README" target="_blank" rel="noopener">Taro 介绍</a></p>
+</blockquote>
+<p><code>Taro</code>是一套优秀的多端开发解决方案。我们团队自较早期时(18年底)便开始了深入研究，并投入到丰富的微信小程序开发实践中，同时作者还负责团队<code>Taro</code>转百度/字节跳动/<code>React-Native</code>的项目。</p>
+<p>本文将介绍<code>Taro</code>转<code>React-Native</code>的项目框架、<code>Taro</code>转<code>React-Native</code>过程中遇到的问题和解决方案、RN的热更新，以及框架相关的思考。</p>
+<p>项目完成于去年(2019年)，最近才抽空重新修改了总结文档放到博客上。因此可能有些转换细节不是最新的，请留意。</p>
+<h1 id="二、项目实践"><a href="#二、项目实践" class="headerlink" title="二、项目实践"></a>二、项目实践</h1><p>Taro 转 React-Native（以下简称RN） 项目，目前应用于将“美梨工坊桌面”项目（Taro）转换成美梨桌面 iOS App（基于 RN 进行封装的 App 壳），是 App 的 RN 内置包系统，主要功能为 RN 所有功能的展现，包括协作项目开发、页面展示、公共 Bundle、热更新、预下载、一键部署等特性。</p>
+<p>作用：让客户端/前端团队能支持更灵活的开发协作、节省开发成本、支持及时处理线上问题。</p>
+<h2 id="2-1-整体框架"><a href="#2-1-整体框架" class="headerlink" title="2.1 整体框架"></a>2.1 整体框架</h2><p>包含以下四个方面。</p>
+<h3 id="开发链路"><a href="#开发链路" class="headerlink" title="开发链路"></a>开发链路</h3><ul>
+<li>基于 NPM 的 Web 开发体验</li>
+<li>基于 Webpack 构建，完整的项目管理</li>
+<li>React-Native 二次组件、工具集合类</li>
+</ul>
+<h3 id="打包链路"><a href="#打包链路" class="headerlink" title="打包链路"></a>打包链路</h3><ul>
+<li>自动打包、随版本生成配置</li>
+<li>持续集成、部署、交付</li>
+</ul>
+<h3 id="发布链路"><a href="#发布链路" class="headerlink" title="发布链路"></a>发布链路</h3><ul>
+<li>git webhook，自动发布</li>
+<li>后台 API，OSS 自动上传</li>
+<li>发布配置后台，通知提醒</li>
+</ul>
+<h3 id="Native-支持"><a href="#Native-支持" class="headerlink" title="Native 支持"></a>Native 支持</h3><ul>
+<li>推送功能支持</li>
+<li>原生路由至 RN 页面支持</li>
+<li>Bundle 文件和资源文件的更新</li>
+</ul>
+<h2 id="2-2-RN-准备工作"><a href="#2-2-RN-准备工作" class="headerlink" title="2.2 RN 准备工作"></a>2.2 RN 准备工作</h2><p>目前只在 iOS 平台上做部署，所以只展开 iOS 端的准备工作。</p>
+<ul>
+<li>安装依赖库</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install node</span><br><span class="line">brew install watchman</span><br></pre></td></tr></table></figure>
+<ul>
+<li>安装 React-Native 命令行工具</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g yarn react-native-cli</span><br></pre></td></tr></table></figure>
+<ul>
+<li>安装 Xcode</li>
+<li>在 config/index.js 文件中配置：</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rn: &#123;</span><br><span class="line">  appJson: &#123;</span><br><span class="line">    name: 'MeiliDesktop',</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相关开发链接：</p>
+<ul>
+<li><a href="https://reactnative.cn/docs/getting-started/" target="_blank" rel="noopener">RN开发文档</a></li>
+<li><a href="https://taro-docs.jd.com/taro/docs/react-native.html" target="_blank" rel="noopener">Taro React-Native 端开发流程</a></li>
+</ul>
+<h2 id="2-3-遇到的问题"><a href="#2-3-遇到的问题" class="headerlink" title="2.3 遇到的问题"></a>2.3 遇到的问题</h2><p>主要列举 Taro 转换 React-Native 过程中遇到的问题及处理方法。</p>
+<h3 id="2-3-1-环境-依赖库相关问题"><a href="#2-3-1-环境-依赖库相关问题" class="headerlink" title="2.3.1 环境/依赖库相关问题"></a>2.3.1 环境/依赖库相关问题</h3><ul>
+<li>node-sass</li>
+</ul>
+<p>执行项目 yarn，安装 node-sass 库会失败，根据 <a href="https://www.npmjs.com/package/node-sass/v/4.9.1" target="_blank" rel="noopener">node-sass 官网</a>文档，切换源并使用 npm 可以成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g mirror-config-china --registry=http://registry.npm.taobao.org</span><br><span class="line">npm install node-sass</span><br></pre></td></tr></table></figure>
+<ul>
+<li>fbjs</li>
+</ul>
+<p>提示找不到 fbjs，添加该库并执行安装。</p>
+<ul>
+<li>NervJS/taro-native-shell 壳子应用编译失败</li>
+</ul>
+<p>文档建议使用 <a href="https://github.com/NervJS/taro-native-shell" target="_blank" rel="noopener">NervJS/taro-native-shell</a> 工程，该工程是 RN 工程中原生的部分。</p>
+<p>可能会遇到环境或 Xcode 版本兼容问题，可以自行生成壳子工程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">react-native init AwesomeProject</span><br></pre></td></tr></table></figure>
+<ul>
+<li>The UMNativeModulesProxy native module is not exported through NativeModules</li>
+</ul>
+<p>使用自行生成的壳子工程需要自行安装依赖<code>react-native-unimodules</code>，添加到<code>package.json</code>的<code>dependencies</code>中。</p>
+<ul>
+<li>selector hasGrantedPermission</li>
+</ul>
+<p><code>react-native-unimodules</code>使用的是 0.7.0 版本，发现换成 0.6.0 即可解决。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;react-native-unimodules&quot;: &quot;0.6.0&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-2-组件-样式问题"><a href="#2-3-2-组件-样式问题" class="headerlink" title="2.3.2 组件/样式问题"></a>2.3.2 组件/样式问题</h3><ul>
+<li>Invariant Violation: Text strings must be rendered within a  component.</li>
+</ul>
+<p>文字需要包在 <code>Text</code> 组件里面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;View className=&apos;page-order-detail__content&apos;&gt;</span><br><span class="line">    &#123;steps &amp;&amp; steps.length &amp;&amp; (&lt;View&gt;&lt;/View&gt;)</span><br><span class="line">&lt;/View&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的代码也会提示错误，需要改成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;View className=&apos;page-order-detail__content&apos;&gt;</span><br><span class="line">    &#123;steps &amp;&amp; steps.length &gt; 0 &amp;&amp; (&lt;View&gt;&lt;/View&gt;)</span><br><span class="line">&lt;/View&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Input 设置<code>line-height</code>会导致输入内容显示异常</li>
+</ul>
+<p>内容会显示偏下并被遮挡</p>
+<ul>
+<li>Text 组件不支持设置圆角等</li>
+<li>Input 不支持设置<code>Height</code></li>
+<li>400,700，normal 或 bold 之外的 font-weight 值在Android上的React-Native中没有效果</li>
+<li>不支持<code>100vh</code>设置</li>
+<li>其他不支持的样式</li>
+</ul>
+<p><code>React-Native</code>的样式基于开源的跨平台布局引擎 <a href="https://github.com/facebook/yoga" target="_blank" rel="noopener">Yoga</a> ，样式基本上是实现了 CSS 的一个子集，所以会有些样式不支持，在出错时会给出支持的样式列表。如 RN 不支持针对某一边设置 style，即 border-bottom-style 会报错。</p>
+<ul>
+<li>必须使用 Flex 布局</li>
+<li>文字要包在 <code>Text</code> 组件里面，否则不显示</li>
+<li><code>position:fixed</code> React-Native 不支持</li>
+<li>样式选择器仅支持类选择器，且不支持 <strong>组合器</strong></li>
+<li>RN 中 View 标签默认主轴方向是 column</li>
+</ul>
+<p>如果需要兼容各端，最好在布局中显式声明主轴方向。</p>
+<h3 id="2-3-3-其他问题"><a href="#2-3-3-其他问题" class="headerlink" title="2.3.3 其他问题"></a>2.3.3 其他问题</h3><ul>
+<li>不支持同步的 Storage 存取</li>
+</ul>
+<p>即不支持<code>Taro.setStorageSync</code>和<code>Taro.getStorageSync</code>两个同步方法，因此需要对已有代码进行重构，使用<code>async/await</code>和<code>Promise</code>进行处理。</p>
+<ul>
+<li>找不到方法/函数</li>
+</ul>
+<p>所有的方法参数传递，需要<code>bind(this)</code></p>
+<ul>
+<li>this.setState is not a function</li>
+</ul>
+<p>寻找未添加<code>bind(this)</code>的方法参数传递，添加<code>bind(this)</code></p>
+<ul>
+<li><code>componentWillMount()</code>即将废弃</li>
+</ul>
+<p>使用<code>componentDidMount()</code>实现</p>
+<ul>
+<li>没有读取文件并进行 base64 编码</li>
+</ul>
+<p>使用<code>rn-fetch-blob</code>库解决。</p>
+<h3 id="2-3-4-其他参考"><a href="#2-3-4-其他参考" class="headerlink" title="2.3.4 其他参考"></a>2.3.4 其他参考</h3><p>Taro 官方提供了<a href="https://taro-docs.jd.com/taro/docs/before-dev-remind.html" target="_blank" rel="noopener">各端开发前注意事项</a>，特别是使用 RN 的样式区别。</p>
+<p>Taro 官方提供了<a href="https://taro-docs.jd.com/taro/docs/best-practice.html" target="_blank" rel="noopener">最佳实践</a>，可以参考。</p>
+<p>Taro 官方提供了<a href="https://taro-docs.jd.com/taro/docs/composition.html" target="_blank" rel="noopener">更多资源</a>，可以查看其他团队的文章分享和遇到的问题解决。</p>
+<h2 id="2-4-热更新方案"><a href="#2-4-热更新方案" class="headerlink" title="2.4 热更新方案"></a>2.4 热更新方案</h2><p>目前业界 RN 热更新方案同样分为 全量更新 和 增量更新。原理同 Weex 类似，此处不再赘述。</p>
+<p>全量更新分为两部分，即<code>Bundle</code>文件和资源的更新。</p>
+<ul>
+<li>目前方案</li>
+</ul>
+<p>当前项目页面较少，整个 Bundle 文件不到 2MB，目前使用全量更新。</p>
+<p>资源文件夹先压缩再上传；<code>App</code>端下载后进行<code>md5</code>验证，验证通过则解压到缓存目录。</p>
+<p>在下次重新打开 App 才读取缓存的<code>Bundle</code>和 资源。</p>
+<p>接口格式可参考以下方案：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;error_code&quot;: 0,</span><br><span class="line">    &quot;error_message&quot;: &quot;成功&quot;,</span><br><span class="line">    &quot;data&quot;: &#123;</span><br><span class="line">        &quot;bundle&quot;: &#123;</span><br><span class="line">            &quot;version&quot;: &quot;190108174500&quot;,</span><br><span class="line">            &quot;url&quot;: &quot;https://xxx/main.jsbundle&quot;,</span><br><span class="line">            &quot;md5&quot;: &quot;xxx&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;assets&quot;: &#123;</span><br><span class="line">            &quot;version&quot;: &quot;190108174500&quot;,</span><br><span class="line">            &quot;url&quot;: &quot;https://xxx/assets.zip&quot;,</span><br><span class="line">            &quot;md5&quot;: &quot;xxx&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为该项目的用户是公司内部员工，目前第一版，所以没有对复杂情况进行处理，后续应用后再持续设计。</p>
+<p>如支持不同设备或不同<code>App</code>版本使用不同的<code>Bundle</code>等等。</p>
+<ul>
+<li>Pushy</li>
+</ul>
+<p>目前官方推荐热更新框架<a href="https://pushy.reactnative.cn" target="_blank" rel="noopener">Pushy</a>，可以了解下，原理都是差不多的，实现会更方便。</p>
+<h2 id="2-5-相关命令及其作用"><a href="#2-5-相关命令及其作用" class="headerlink" title="2.5 相关命令及其作用"></a>2.5 相关命令及其作用</h2><ul>
+<li>Taro 转 RN</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">taro build --type rn</span><br></pre></td></tr></table></figure>
+<ul>
+<li>调试代码</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">taro build --type rn --watch</span><br></pre></td></tr></table></figure>
+<ul>
+<li>打包 RN Bundle 和资源</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd rn_temp &amp;&amp; node ../node_modules/react-native/local-cli/cli.js bundle --entry-file ./rn_temp/index.js --bundle-output ./bundle/main.jsbundle --assets-dest ./bundle --dev false</span><br></pre></td></tr></table></figure>
+<p>执行 Taro 转 RN 命令后，在项目中会生成 rn_temp 文件夹，该文件夹即完整的 RN 代码，打包 RN 需要进入该目录执行。</p>
+<p>打包后会生成 Bundle 文件和资源文件夹，用于替换原生保存的 RN 内容。</p>
+<h1 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h1><ul>
+<li>友好度——转换工作复杂度</li>
+</ul>
+<p>由于作者是开发<code>iOS</code>客户端的，且于4年前已经在现有项目中集成过<code>React-Native</code>页面，对<code>React-Native</code>的原理和机制有过研究，实践过相关技术栈，所以转换工作相对容易。</p>
+<p>对于不是客户端出身，或者不熟悉<code>React-Native</code>/<code>Weex</code>等客户端跨平台框架的机制和技术栈的同学，需要做点其他功课。</p>
+<ul>
+<li>多端适配以<code>React-Native</code>样式为主</li>
+</ul>
+<p>如果需要适配多端，需要以 <code>React-Native</code> 的约束来管理样式。</p>
+<p>因为样式上<code>H5</code>最为灵活，小程序次之，<code>React-Native</code>最弱（<code>React-Native</code>的样式基于开源的跨平台布局引擎 <a href="https://github.com/facebook/yoga" target="_blank" rel="noopener">Yoga</a> ，样式基本上是实现了 CSS 的一个子集），统一多端样式即是对齐短板，也就是要以 <code>React-Native</code> 的约束来管理样式，同时兼顾小程序的限制。</p>
+<ul>
+<li><code>Taro</code>-&gt; <code>React-Native</code> -&gt; <code>iOS/Android</code>链条长</li>
+</ul>
+<p>通过 <code>Taro</code> 转<code>React-Native</code>，<code>React-Native</code>再转<code>iOS/Android</code>，链条过长，会面临复杂度增加、维护成本较大、组件适配、客户端系统版本和语言升级维护等问题，同时影响一些复杂功能的实现方案的决策和估时。</p>
+<p>毫无疑问，这是复杂度非常高的架构设计，对开发人员的能力和各方面经验有较高要求。</p>
+<p>为了尽早覆盖跨客户端，<code>Taro</code>官方选择 <code>React-Native</code>无疑是最快速和易行的方案。</p>
+<ul>
+<li>跨端效果和质量</li>
+</ul>
+<p>总体而言，在功能不复杂的项目中，进行<code>Taro</code>转换<code>React-Native</code>，虽然修改较多但都不算难处理，虽有几处转换问题需等官方处理，但转换后的效果和质量还算OK。</p>
+<p>-END-<br>欢迎到我的博客交流：<a href="https://zackzheng.info">https://zackzheng.info</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Taro/" rel="tag"># Taro</a>
+          
+            <a href="/tags/React-Native/" rel="tag"># React-Native</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/07/use-reduce-to-run-promise-sequentially/" rel="next" title="手把手教你Promise小技巧——小程序接口数限制下的并行再顺序执行">
+                <i class="fa fa-chevron-left"></i> 手把手教你Promise小技巧——小程序接口数限制下的并行再顺序执行
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/01/02/financial-summary-of-2020/" rel="prev" title="2020财务小结及理财心得分享">
+                2020财务小结及理财心得分享 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Zack Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sapphirezzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhengzuanzhe@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、项目实践"><span class="nav-number">2.</span> <span class="nav-text">二、项目实践</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-整体框架"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 整体框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#开发链路"><span class="nav-number">2.1.1.</span> <span class="nav-text">开发链路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包链路"><span class="nav-number">2.1.2.</span> <span class="nav-text">打包链路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布链路"><span class="nav-number">2.1.3.</span> <span class="nav-text">发布链路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Native-支持"><span class="nav-number">2.1.4.</span> <span class="nav-text">Native 支持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-RN-准备工作"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 RN 准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-遇到的问题"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-环境-依赖库相关问题"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 环境/依赖库相关问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-组件-样式问题"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 组件/样式问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-其他问题"><span class="nav-number">2.3.3.</span> <span class="nav-text">2.3.3 其他问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-4-其他参考"><span class="nav-number">2.3.4.</span> <span class="nav-text">2.3.4 其他参考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-热更新方案"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 热更新方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-相关命令及其作用"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 相关命令及其作用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、总结"><span class="nav-number">3.</span> <span class="nav-text">三、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zack Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.1.3/jquery.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/velocity/1.2.1/velocity.ui.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("C11uT2uv69iSLPAEFiHJbnr9-gzGzoHsz", "PeIEayFBbCg6sRnLi6yeImgD");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
